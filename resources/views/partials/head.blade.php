@@ -24,3 +24,54 @@
 
 <!-- Main CSS File -->
 <link href="{{ asset('assets/css/main.css') }}" rel="stylesheet">
+
+<style>
+    .loader {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1010;
+      visibility: hidden; /* Initially hidden */
+      opacity: 0;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .loader.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .loader span {
+      width: 16px;
+      height: 16px;
+      background: #c561fb;
+      border-radius: 50%;
+      animation: bounce 0.6s infinite alternate;
+    }
+
+    .loader span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .loader span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes bounce {
+      from {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateY(-20px);
+        opacity: 0.6;
+      }
+    }
+</style>
