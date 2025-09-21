@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('home_contents', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('subtitle');
+            $table->text('title');
+            $table->text('subtitle');
             $table->string('yt_link');
             $table->string('image_hero');
             $table->timestamps();

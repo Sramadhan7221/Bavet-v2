@@ -9,6 +9,14 @@
                     {{-- <span class="badge bg-success float-end">9+</span> --}}
                 </a>
             </li>
+            
+            <li class="side-nav-item">
+                <a href="{{ route('admin.home') }}" class="side-nav-link">
+                    <i class="ri-compass-3-line"></i>
+                    <span> Home Content </span>
+                    {{-- <span class="badge bg-success float-end">9+</span> --}}
+                </a>
+            </li>
     
             <li class="side-nav-item">
                 <a href="{{ route('menus.tree') }}" class="side-nav-link">

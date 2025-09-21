@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\HomeContent;
 use App\Models\Menus;
+use App\Services\FileService;
+use App\Validators\HomeValidator;
 use App\Validators\MenuValidator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +16,8 @@ use Illuminate\Validation\ValidationException;
 
 class CMSController extends Controller
 {
+
+    public function __construct(private FileService $fileService) {}
 
     public function menuList(Request $request) 
     {
@@ -180,9 +185,38 @@ class CMSController extends Controller
     }
 
 
-    public function manage($slug)
+    public function home(Request $request)
     {
-        dd($slug);
+        try {
+            if($request->isMethod('POST')) {
+                $validated = HomeValidator::validate($request, $request->id);
+                if ($request->hasFile('image_hero')) {
+                    $image = $request->file('image_hero');
+                    $filename = sprintf('home-%s', Str::uuid());
+                    $path = $this->fileService->saveFile($image, $filename, 'home');
+
+                    $validated['image_hero'] = url($path);
+                }
+
+                if($request->filled('id'))
+                    HomeContent::where('id', $request->id)->update($validated);
+                else
+                    HomeContent::create($validated);
+
+                return response()->json(['msg_type' => "success", 'message' => "success"]);
+            }
+
+            return view('admin.home-content',[
+                'title' => 'Home Content',
+                'content' => HomeContent::first()
+            ]);
+        } catch (ValidationException $e) {
+            $errors = $e->validator->errors();
+            return response()->json(['msg_type' => "warning", 'message' => $errors], 400);
+        } catch (\Throwable $th) {
+            Log::error('Kesalahan Sistem: ' . $th->getMessage());
+            return response()->json(['msg' => "Terjadi Kesalahan", "msg_type" => "error"], 500);
+        }
     }
 
     private function handleStaticType()

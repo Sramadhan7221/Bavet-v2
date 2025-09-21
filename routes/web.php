@@ -21,4 +21,6 @@ Route::middleware('auth')->group(function () {
     Route::get('menu-detail/{id}', [CMSController::class, 'menuDetail'])->name('menus.item');
     Route::post('menu-delete', [CMSController::class, 'menuDelete'])->name('menus.item-delete');
     Route::post('menu-order', [CMSController::class, 'menuReorder'])->name('menus.item-order');
+
+    Route::any('cms-home', [CMSController::class, 'home'])->name('admin.home');
 });
