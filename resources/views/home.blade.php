@@ -64,7 +64,7 @@
 
     </section><!-- /About Section -->
 
-    <!-- Values Section -->
+    {{-- <!-- Values Section -->
     <section id="values" class="values section">
 
       <!-- Section Title -->
@@ -105,7 +105,7 @@
 
       </div>
 
-    </section><!-- /Values Section -->
+    </section><!-- /Values Section --> --}}
 
     {{-- <!-- Stats Section -->
     <section id="stats" class="stats section">
@@ -160,13 +160,13 @@
 
     </section><!-- /Stats Section --> --}}
 
-    {{-- <!-- Features Section -->
+    <!-- Features Section -->
     <section id="features" class="features section">
 
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
-        <h2>Features</h2>
-        <p>Our Advacedd Features<br></p>
+        <h2>visi & misi</h2>
+        <p>Visi & Misi<br></p>
       </div><!-- End Section Title -->
 
       <div class="container">
@@ -178,6 +178,9 @@
           </div>
 
           <div class="col-xl-6 d-flex">
+            <div class="content">
+              <p></p>
+            </div>
             <div class="row align-self-center gy-4">
 
               <div class="col-md-6" data-aos="fade-up" data-aos-delay="200">
@@ -229,7 +232,7 @@
 
       </div>
 
-    </section><!-- /Features Section --> --}}
+    </section><!-- /Features Section -->
 
     {{-- <!-- Alt Features Section -->
     <section id="alt-features" class="alt-features section">

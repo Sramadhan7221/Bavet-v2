@@ -22,4 +22,5 @@ Route::middleware('auth')->group(function () {
     Route::post('menu-order', [CMSController::class, 'menuReorder'])->name('menus.item-order');
 
     Route::any('cms-home', [CMSController::class, 'home'])->name('admin.home');
+    Route::any('cms-about', [CMSController::class, 'about'])->name('admin.about');
 });

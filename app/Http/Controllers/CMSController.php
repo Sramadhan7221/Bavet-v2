@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AboutContent;
 use App\Models\HomeContent;
 use App\Models\Menus;
 use App\Services\FileService;
+use App\Validators\AboutValidator;
 use App\Validators\HomeValidator;
 use App\Validators\MenuValidator;
 use Illuminate\Http\Request;
@@ -209,6 +211,48 @@ class CMSController extends Controller
             return view('admin.home-content',[
                 'title' => 'Home Content',
                 'content' => HomeContent::first()
+            ]);
+        } catch (ValidationException $e) {
+            $errors = $e->validator->errors();
+            return response()->json(['msg_type' => "warning", 'message' => $errors], 400);
+        } catch (\Throwable $th) {
+            Log::error('Kesalahan Sistem: ' . $th->getMessage());
+            return response()->json(['msg' => "Terjadi Kesalahan", "msg_type" => "error"], 500);
+        }
+    }
+
+    public function about(Request $request)
+    {
+        try {
+            if($request->isMethod('POST')) {
+                $validated = AboutValidator::validate($request, $request->id);
+                if ($request->hasFile('image_hero')) {
+                    $image = $request->file('image_hero');
+                    $filename = sprintf('about-%s', Str::uuid());
+                    $path = $this->fileService->saveFile($image, $filename, 'about');
+
+                    $validated['image_hero'] = url($path);
+                }
+
+                if ($request->hasFile('image_visimisi')) {
+                    $image = $request->file('image_visimisi');
+                    $filename = sprintf('about-%s', Str::uuid());
+                    $path = $this->fileService->saveFile($image, $filename, 'about');
+
+                    $validated['image_visimisi'] = url($path);
+                }
+
+                if($request->filled('id'))
+                    AboutContent::where('id', $request->id)->update($validated);
+                else
+                    AboutContent::create($validated);
+
+                return response()->json(['msg_type' => "success", 'message' => "success", 'data' => ['image_hero' => $validated['image_hero'], 'image_visimisi' => $validated['image_visimisi']]]);
+            }
+
+            return view('admin.about-content',[
+                'title' => 'Tentang Content',
+                'content' => AboutContent::first()
             ]);
         } catch (ValidationException $e) {
             $errors = $e->validator->errors();

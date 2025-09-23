@@ -19,7 +19,7 @@ class HomeValidator
                 'title' => ['required', 'string'],
                 'subtitle' => ['required', 'string'],
                 'yt_link' => ['required', 'string'],
-                'image_hero' => [ is_null($id) ? 'required' : 'nullable', 'file', 'mimes:jpg,png', 'max:4096']
+                'image_hero' => [ is_null($id) ? 'required' : 'nullable', 'file', 'mimes:jpg,png,jpeg', 'max:4096']
             ],
             [
                 'title.required' => "Judul Home harus diisi",

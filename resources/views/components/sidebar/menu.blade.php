@@ -13,7 +13,15 @@
             <li class="side-nav-item">
                 <a href="{{ route('admin.home') }}" class="side-nav-link">
                     <i class="ri-compass-3-line"></i>
-                    <span> Home Content </span>
+                    <span> Beranda Content </span>
+                    {{-- <span class="badge bg-success float-end">9+</span> --}}
+                </a>
+            </li>
+            
+            <li class="side-nav-item">
+                <a href="{{ route('admin.about') }}" class="side-nav-link">
+                    <i class="ri-compass-3-line"></i>
+                    <span> Tentang Content </span>
                     {{-- <span class="badge bg-success float-end">9+</span> --}}
                 </a>
             </li>
