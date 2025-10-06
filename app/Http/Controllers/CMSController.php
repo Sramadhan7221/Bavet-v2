@@ -5,11 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\AboutContent;
 use App\Models\HomeContent;
 use App\Models\Menus;
+use App\Models\PageAssets;
+use App\Models\Pages;
 use App\Services\FileService;
 use App\Validators\AboutValidator;
 use App\Validators\HomeValidator;
 use App\Validators\MenuValidator;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -247,12 +251,18 @@ class CMSController extends Controller
                 else
                     AboutContent::create($validated);
 
-                return response()->json(['msg_type' => "success", 'message' => "success", 'data' => ['image_hero' => $validated['image_hero'], 'image_visimisi' => $validated['image_visimisi']]]);
+                $data = [
+                    'image_hero' => isset($validated['image_hero']) ? $validated['image_hero'] : null,
+                    'image_visimisi' => isset($validated['image_visimisi']) ? $validated['image_visimisi'] : null
+                ];
+                return response()->json(['msg_type' => "success", 'message' => "success", 'data' => $data]);
             }
 
+            $content = Pages::where('slug', 'about')->first();
             return view('admin.about-content',[
                 'title' => 'Tentang Content',
-                'content' => AboutContent::first()
+                'content' => AboutContent::first(),
+                'page_id' => $content->id
             ]);
         } catch (ValidationException $e) {
             $errors = $e->validator->errors();
@@ -263,9 +273,67 @@ class CMSController extends Controller
         }
     }
 
-    private function handleStaticType()
+    public function uploadAsset(Request $request)
     {
-        
+        try {
+            
+            $request->validate([
+                'upload' => 'required|mimes:jpg,jpeg,png|max:2048'
+            ]);
+
+            $image = $request->file('upload');
+            $asset = $this->saveImageAsset($image,'page-assets',$request->page_id);
+
+            return response()->json(['message' => "Image Uploaded", 'msg_type' => 'success', 'url' => $asset->url ]);
+
+        } catch (ValidationException $e) {
+            $message = collect($e->validator->errors()->all())->map(fn($v) => "<p>$v</p>")->implode('');
+            return response()->json(['message' => $message, 'msg_type' => 'warning'], 400);
+        } catch (\Throwable $th) {
+            Log::error('[QuestionBankController] System Error: ' . $th->getMessage() . ' at line ' . $th->getLine());
+            return response()->json(['message' => 'Something went wrong. Please try again later.', 'msg_type' => 'error'], 500);
+        }
+    }
+
+    public function deleteAsset(Request $request) 
+    {
+        try {
+            $request->validate([
+                'old_url' => 'required|url'
+            ]);
+
+            if($this->fileService->deleteFile($request->old_url))
+                return response()->json(['message' => "Berhasil menghapus gambar", 'msg_type' => 'success']);
+            else 
+                return response()->json(['message' => "Gagal menghapus gambar", 'msg_type' => 'warning']);
+
+        } catch (ValidationException $e) {
+            $message = collect($e->validator->errors()->all())->map(fn($v) => "<p>$v</p>")->implode('');
+            return response()->json(['message' => $message, 'msg_type' => 'warning'], 400);
+        } catch (\Throwable $th) {
+            Log::error('[QuestionBankController] System Error: ' . $th->getMessage() . ' at line ' . $th->getLine());
+            return response()->json(['message' => 'Something went wrong. Please try again later.', 'msg_type' => 'error'], 500);
+        }
+    }
+
+    private function saveImageAsset(UploadedFile $file, string $path, ?int $page_id = null, string $type = 'content'): PageAssets
+    {
+
+        return DB::transaction(function () use ($file, $path, $page_id, $type) {
+            try {
+                $imgPath = $this->fileService->saveFile($file, Str::uuid(), $path);
+                $urlPath = url($imgPath);
+
+                return PageAssets::create([
+                    'url' => $urlPath,
+                    'page_id' => $page_id,
+                    'type' => $type,
+                ]);
+            } catch (\Throwable $th) {
+                Log::error("[CMSController] Failed to save asset: {$th->getMessage()}");
+                throw $th;
+            }
+        });
     }
 
     private function handleModuleType()

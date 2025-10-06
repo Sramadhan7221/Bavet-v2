@@ -21,10 +21,10 @@ class Pages extends Model
     protected $fillable = [
         'title',
         'slug',
-        'content',
-        'tags',
-        'type',
-        'is_active',
+        'content', //nullable
+        'tags', //nullable
+        'type', //['gallery', 'blog']
+        'is_active', //['true','false']
         'created_by',
         'updated_by'
     ];

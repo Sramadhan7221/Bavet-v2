@@ -12,7 +12,10 @@
                     {{-- <h3 style="margin-bottom: 2.5rem; color: #b8860b;">Master Mahasiswa</h3> --}}
                     <form id="formMenus" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <div class="row">
+                        <h3 class="mb-3">Sambutan</h3>
+                        <hr>
+                        <input type="hidden" id="page_id" value="{{ $page_id ?? "" }}">
+                        <div class="row mt-1">
                             <div class="col-6">
                                 <div class="form-group row mb-3">
                                     <label class="col-sm-3">Judul</label>
@@ -61,7 +64,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        <h3 class="my-3">Visi & Misi</h3>
+                        <hr>
+                        <div class="row mt-1">
                             <div class="col-6">
                                 <div class="form-group row mb-3">
                                     <label class="col-sm-3">Visi</label>
@@ -89,7 +94,7 @@
                                                 id="misi" 
                                                 class="form-control" 
                                                 style="border-radius:5px;"
-                                                value="{{ isset($misiList[0]) ? $misiList[0] : "" }}"
+                                            value="{{ isset($misiList[0]) ? $misiList[0] : "" }}"
                                             >
                                             <button type="button" class="btn btn-primary" id="addMisi">
                                                 <i class="ri-add-circle-line"></i>
@@ -129,6 +134,28 @@
                                 </div>
                             </div>
                         </div>
+                        <h3 class="my-3">Sejarah & Tugas dan Fungsi</h3>
+                        <hr>
+                        <div class="row mt-1">
+                            <div class="form-group row mb-3">
+                                <label class="col-sm-3">Sejarah singkat</label>
+                                <div class="col-sm-9">
+                                    <textarea name="sejarah" id="sejarah" class="form-control" style="border-radius:5px;" cols="3" rows="3">{{ $content?->sejarah ?? "" }}</textarea>
+                                    <div class="invalid-feedback">
+                                        Visi kosong
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-3">
+                                <label class="col-sm-3">Tugas dan Fungsi</label>
+                                <div class="col-sm-9">
+                                    <textarea name="tugas_fungsi" id="tugas_fungsi" class="form-control" style="border-radius:5px;" cols="3" rows="3">{{ $content?->tugas_fungsi ?? "" }}</textarea>
+                                    <div class="invalid-feedback">
+                                        Visi kosong
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </form>
                     <div class="d-flex justify-content-end">
                         <button type="button" class="btn btn-outline-primary rounded-pill" data-toggle="tooltip" data-placement="top" title="Simpan input" id="addRecord">
@@ -150,12 +177,54 @@
 
 @push('styles')
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-lite.min.css" rel="stylesheet">
+    <style>
+        .border-error {
+            border: 2px solid red!important;
+        }
+    </style>
 @endpush
 
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-lite.min.js"></script>
     <script>
         $(document).ready(function () {
+            $("#sejarah").summernote({
+                minHeight: 200,
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear','fontname','fontsize','color','ul', 'ol', 'paragraph']],
+                    ['insert', ['picture']]
+                ],
+                callbacks: {
+                    onImageUpload: function(files) {
+                        uploadImage(files[0], $(this), "{{ route('asset.upload') }}");
+                    },
+                    onMediaDelete: function(target) {
+                        deleteImage(target[0].src);
+                    },
+                    onChange: function(contents, $editable) {
+                        saveImageSize($editable);
+                    }
+                }
+            });
+
+            $("#tugas_fungsi").summernote({
+                minHeight: 200,
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear','fontname','fontsize','color','ul', 'ol', 'paragraph']],
+                    ['insert', ['picture']]
+                ],
+                callbacks: {
+                    onImageUpload: function(files) {
+                        uploadImage(files[0], $(this), "{{ route('asset.upload') }}");
+                    },
+                    onMediaDelete: function(target) {
+                        saveImageSize($editable);
+                    }
+                }
+            });
+
             $("#addRecord").click(function() {
 
                 let fileInput = $('#image_hero')[0];
@@ -178,6 +247,8 @@
                 $("input[name='misi[]']").each(function() {
                     formData.append('misi[]', $(this).val());
                 });
+                formData.append('sejarah', $("#sejarah").summernote('code'));
+                formData.append('tugas_fungsi', $("#tugas_fungsi").summernote('code'));
 
                 $.ajax({
                     url: "{{ route('admin.about') }}", 
@@ -197,8 +268,10 @@
                         
                         let data = response.data;
 
-                        $("#image_heroPrev").prop("src", data.image_hero);
-                        $("#image_visimisiPrev").prop("src", data.image_visimisi);
+                        if(data.image_hero)
+                            $("#image_heroPrev").prop("src", data.image_hero);
+                        if(data.image_visimisi)
+                            $("#image_visimisiPrev").prop("src", data.image_visimisi);
 
                         Swal.fire({
                             title: response.msg_type,
@@ -285,6 +358,67 @@
                     $("#misi").val("");
                 }
             })
+
+            function uploadImage(file, editor, url) {
+                let data = new FormData();
+                data.append("upload", file);
+                data.append("_token", "{{ csrf_token() }}");
+
+                $.ajax({
+                    url: url, // endpoint Laravel untuk upload
+                    type: "POST",
+                    data: data,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.url) {
+                            // masukkan gambar ke editor Summernote
+                            editor.summernote('insertImage', response.url);
+                        } else {
+                            alert("Upload gagal!");
+                        }
+                    },
+                    error: function(xhr) {
+                        const response = xhr.responseJSON;
+                        Swal.fire({
+                            title: "Error",
+                            text: res.message,
+                            icon: res.msg_type
+                        });
+                    }
+                });
+            }
+
+            function deleteImage(oldUrl) {
+                $.ajax({
+                    url: "{{ route('asset.delete') }}", // Your server-side endpoint
+                    method: 'POST', // Or 'DELETE'
+                    data: { old_url: oldUrl,  _token: "{{ csrf_token() }}"},
+                    success: function(response) {
+                        console.log('Aksi hapus gambar:', response.message);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Gagal hapus foto:', error);
+                    }
+                });
+            }
+
+            function saveImageSize($editable) {
+                const isHasImage = $editable.find('img');
+                if (isHasImage.length > 0) {
+                    isHasImage.each(function() {
+                        let parentWidth = $(this).parent().width(); 
+                        let imageWidthPx = $(this).width();
+
+                        if (parentWidth && imageWidthPx) {
+                            let widthPercent = (imageWidthPx / parentWidth) * 100;
+
+                            $(this).css('width', '');
+                            $(this).attr('width', Math.round(widthPercent.toFixed(2)) + '%');
+                        }
+                    });
+                }
+            }
         });
     </script>
 @endpush

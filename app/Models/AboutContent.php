@@ -24,6 +24,8 @@ class AboutContent extends Model
         'visi',
         'misi',
         'image_hero',
-        'image_visimisi'
+        'image_visimisi',
+        'sejarah',
+        'tugas_fungsi'
     ];
 }

@@ -18,15 +18,15 @@
       <div class="container">
         <div class="row gy-4">
           <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center">
-            <h1 data-aos="fade-up">{{ $hc->title }}</h1>
-            <p data-aos="fade-up" data-aos-delay="100">{{ $hc->subtitle }}</p>
+            <h1 data-aos="fade-up">{{ $hc?->title }}</h1>
+            <p data-aos="fade-up" data-aos-delay="100">{{ $hc?->subtitle }}</p>
             <div class="d-flex flex-column flex-md-row" data-aos="fade-up" data-aos-delay="200">
               <a href="#about" class="btn-get-started">Selengkapnya <i class="bi bi-arrow-right"></i></a>
-              <a href="{{ $hc->yt_link }}" class="glightbox btn-watch-video d-flex align-items-center justify-content-center ms-0 ms-md-4 mt-4 mt-md-0"><i class="bi bi-play-circle"></i><span>Tonton Video</span></a>
+              <a href="{{ $hc?->yt_link }}" class="glightbox btn-watch-video d-flex align-items-center justify-content-center ms-0 ms-md-4 mt-4 mt-md-0"><i class="bi bi-play-circle"></i><span>Tonton Video</span></a>
             </div>
           </div>
           <div class="col-lg-6 order-1 order-lg-2 hero-img" data-aos="zoom-out">
-            <img src="{{ $hc->image_hero }}" class="img-fluid animated" alt="">
+            <img src="{{ $hc?->image_hero }}" class="img-fluid animated" alt="">
           </div>
         </div>
       </div>
@@ -42,9 +42,9 @@
           <div class="col-lg-6 d-flex flex-column justify-content-center" data-aos="fade-up" data-aos-delay="200">
             <div class="content">
               <h3>Tentang Kami</h3>
-              <h2>Expedita voluptas omnis cupiditate totam eveniet nobis sint iste. Dolores est repellat corrupti reprehenderit.</h2>
+              <h2>{{ $about->title }}</h2>
               <p>
-                Quisquam vel ut sint cum eos hic dolores aperiam. Sed deserunt et. Inventore et et dolor consequatur itaque ut voluptate sed et. Magnam nam ipsum tenetur suscipit voluptatum nam et est corrupti.
+                {{ $about->desc }}
               </p>
               <div class="text-center text-lg-start">
                 <a href="#" class="btn-read-more d-inline-flex align-items-center justify-content-center align-self-center">
@@ -56,7 +56,7 @@
           </div>
 
           <div class="col-lg-6 d-flex align-items-center" data-aos="zoom-out" data-aos-delay="200">
-            <img src="{{ asset('assets/img/about.jpg') }}" class="img-fluid" alt="">
+            <img src="{{ $about?->image_hero }}" class="img-fluid" alt="">
           </div>
 
         </div>
@@ -166,31 +166,35 @@
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
         <h2>visi & misi</h2>
-        <p>Visi & Misi<br></p>
+        <p>Visi</p>
       </div><!-- End Section Title -->
 
       <div class="container">
 
+        <div class="content">
+          <p>{{ $about?->visi }}</p>
+        </div>
         <div class="row gy-5">
 
-          <div class="col-xl-6" data-aos="zoom-out" data-aos-delay="100">
-            <img src="{{ asset('assets/img/features.png') }}" class="img-fluid" alt="">
+          <div class="col-xl-5" data-aos="zoom-out" data-aos-delay="100">
+            <img src="{{ $about?->image_visimisi }}" class="img-fluid" alt="">
           </div>
 
-          <div class="col-xl-6 d-flex">
-            <div class="content">
-              <p></p>
-            </div>
-            <div class="row align-self-center gy-4">
+          <div class="col-xl-7 d-flex">
+            <div class="row align-self-center gy-4 mt-2">
+              <div class="container section-title">
+                <p class="m-0">Misi</p>
+              </div>
+              @foreach (explode("|", $about?->misi) as $idx => $item)
+                <div class="col-md-6" data-aos="fade-up" data-aos-delay="{{ $idx+1 * 100 }}">
+                  <div class="feature-box d-flex align-items-center">
+                    <i class="bi bi-check"></i>
+                    <span>{{ $item }}</span>
+                  </div>
+                </div><!-- End Feature Item -->
+              @endforeach
 
-              <div class="col-md-6" data-aos="fade-up" data-aos-delay="200">
-                <div class="feature-box d-flex align-items-center">
-                  <i class="bi bi-check"></i>
-                  <h3>Eos aspernatur rem</h3>
-                </div>
-              </div><!-- End Feature Item -->
-
-              <div class="col-md-6" data-aos="fade-up" data-aos-delay="300">
+              {{-- <div class="col-md-6" data-aos="fade-up" data-aos-delay="300">
                 <div class="feature-box d-flex align-items-center">
                   <i class="bi bi-check"></i>
                   <h3>Facilis neque ipsa</h3>
@@ -223,7 +227,7 @@
                   <i class="bi bi-check"></i>
                   <h3>Repellendus molli</h3>
                 </div>
-              </div><!-- End Feature Item -->
+              </div><!-- End Feature Item --> --}}
 
             </div>
           </div>

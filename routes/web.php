@@ -23,4 +23,6 @@ Route::middleware('auth')->group(function () {
 
     Route::any('cms-home', [CMSController::class, 'home'])->name('admin.home');
     Route::any('cms-about', [CMSController::class, 'about'])->name('admin.about');
+    Route::post('cms-upload-asset', [CMSController::class, 'uploadAsset'])->name('asset.upload');
+    Route::post('cms-delete-asset', [CMSController::class, 'deleteAsset'])->name('asset.delete');
 });
