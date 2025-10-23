@@ -144,7 +144,9 @@ h6 {
 --------------------------------------------------------------*/
 .header {
   color: var(--default-color);
-  background-color: var(--background-color);
+  color: var(--default-color);
+  /* background-color: var(--background-color); */
+  background-color: #CB97CB;;
   padding: 20px 0;
   transition: all 0.5s;
   z-index: 997;

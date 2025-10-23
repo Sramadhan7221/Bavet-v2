@@ -22,7 +22,11 @@ class User extends Authenticatable
         'username',
         'password',
         'picture',
-        'role'
+        'role',
+        'tiktok',
+        'facebook',
+        'instagram',
+        'bio'
     ];
 
     /**

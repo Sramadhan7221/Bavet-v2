@@ -3,7 +3,6 @@
 
 <head>
   @include('partials.head')
-  @stack('styles')
 </head>
 
 <body class="index-page">
@@ -47,7 +46,7 @@
                 {{ $about->desc }}
               </p>
               <div class="text-center text-lg-start">
-                <a href="#" class="btn-read-more d-inline-flex align-items-center justify-content-center align-self-center">
+                <a href="{{ url('/artikel') }}?page=about" class="btn-read-more d-inline-flex align-items-center justify-content-center align-self-center">
                   <span>Baca Selengkapnya</span>
                   <i class="bi bi-arrow-right"></i>
                 </a>
@@ -1203,18 +1202,7 @@
   <!-- Scroll Top -->
   <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-  <!-- Vendor JS Files -->
-  <script src="{{ asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-  <script src="{{ asset('assets/vendor/php-email-form/validate.js') }}"></script>
-  <script src="{{ asset('assets/vendor/aos/aos.js') }}"></script>
-  <script src="{{ asset('assets/vendor/glightbox/js/glightbox.min.js') }}"></script>
-  <script src="{{ asset('assets/vendor/purecounter/purecounter_vanilla.js') }}"></script>
-  <script src="{{ asset('assets/vendor/imagesloaded/imagesloaded.pkgd.min.js') }}"></script>
-  <script src="{{ asset('assets/vendor/isotope-layout/isotope.pkgd.min.js') }}"></script>
-  <script src="{{ asset('assets/vendor/swiper/swiper-bundle.min.js') }}"></script>
-
-  <!-- Main JS File -->
-  <script src="{{ asset('assets/js/main.js') }}"></script>
+  @include('partials.scripts')
 
 </body>
 

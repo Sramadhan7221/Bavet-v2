@@ -5,7 +5,9 @@ use App\Http\Controllers\CMSController;
 use App\Http\Controllers\FrontController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [FrontController::class, 'index']);
+Route::get('/', [FrontController::class, 'index'])->name('beranda');
+Route::get('/artikel', [FrontController::class, 'blog']);
+
 
 
 Route::any('login', [AuthController::class, 'login'])->name('login');

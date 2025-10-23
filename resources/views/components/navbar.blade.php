@@ -1,7 +1,10 @@
 <nav id="navmenu" class="navmenu">
     <ul>
-        <li><a href="#hero" class="active">Beranda<br></a></li>
-        <li><a href="#about">Tentang</a></li>
+        {{-- @dd($active) --}}
+        <li><a href="{{ url('/') }}" class="{{ $active == 'home' ? 'active' : '' }}">Beranda<br></a></li>
+        <li>
+            <a href="{{ url('/artikel') }}?page=about" class="{{ $active == 'about' ? 'active' : '' }}">Tentang</a>
+        </li>
         {{-- <li><a href="#services">Layanan</a></li> --}}
         <li><a href="#portfolio">Aktivitas</a></li>
         <li><a href="#team">Team</a></li>
