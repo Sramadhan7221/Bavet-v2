@@ -27,4 +27,10 @@ Route::middleware('auth')->group(function () {
     Route::any('cms-about', [CMSController::class, 'about'])->name('admin.about');
     Route::post('cms-upload-asset', [CMSController::class, 'uploadAsset'])->name('asset.upload');
     Route::post('cms-delete-asset', [CMSController::class, 'deleteAsset'])->name('asset.delete');
+
+    Route::post('cms-page-status', [CMSController::class, 'changeStatus'])->name('admin.page-status');
+    Route::post('cms-page-delete', [CMSController::class, 'deletePage'])->name('admin.page-delete');
+
+    Route::get('cms-gallery', [CMSController::class, 'gallery'])->name('admin.gallery');
+    Route::any('cms-gallery-detail', [CMSController::class, 'galleryDetail'])->name('admin.gallery.detail');
 });

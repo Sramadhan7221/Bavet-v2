@@ -9,16 +9,20 @@ use App\Models\PageAssets;
 use App\Models\Pages;
 use App\Services\FileService;
 use App\Validators\AboutValidator;
+use App\Validators\GalleryValidator;
 use App\Validators\HomeValidator;
 use App\Validators\MenuValidator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use Yajra\DataTables\Facades\DataTables;
 
 class CMSController extends Controller
 {
@@ -302,10 +306,11 @@ class CMSController extends Controller
                 'old_url' => 'required|url'
             ]);
 
-            if($this->fileService->deleteFile($request->old_url))
-                return response()->json(['message' => "Berhasil menghapus gambar", 'msg_type' => 'success']);
-            else 
-                return response()->json(['message' => "Gagal menghapus gambar", 'msg_type' => 'warning']);
+            if($this->fileService->deleteFile($request->old_url)){
+                PageAssets::where('url', $request->old_url)->delete();
+                return response()->json(['message' => "Berhasil menghapus gambar", 'msg_type' => 'success']);}
+            else {
+                return response()->json(['message' => "Gagal menghapus gambar", 'msg_type' => 'warning']);}
 
         } catch (ValidationException $e) {
             $message = collect($e->validator->errors()->all())->map(fn($v) => "<p>$v</p>")->implode('');
@@ -313,6 +318,166 @@ class CMSController extends Controller
         } catch (\Throwable $th) {
             Log::error('[QuestionBankController] System Error: ' . $th->getMessage() . ' at line ' . $th->getLine());
             return response()->json(['message' => 'Something went wrong. Please try again later.', 'msg_type' => 'error'], 500);
+        }
+    }
+
+    public function gallery(Request $request)
+    {
+        try {
+
+            if ($request->ajax()) {
+                $model = Pages::query()
+                ->select(['slug', 'banner', 'title','is_active', 'created_at'])->where('type', 'gallery');
+
+                return DataTables::of($model)
+                ->addIndexColumn()
+                ->editColumn('created_at', function($page) {
+                    Carbon ::setLocale('id');
+                    $date = Carbon::parse($page->tgl_lacreated_athir);
+                    $formattedDate = $date->translatedFormat('d F, Y');
+                    return $formattedDate;
+                })
+                ->make(true);   
+            }
+
+            return view('admin.gallery.list',[
+                'title' => 'Galeri'
+            ]);
+        } catch (ValidationException $e) {
+            $errors = $e->validator->errors();
+            return response()->json(['msg_type' => "warning", 'message' => $errors], 400);
+        } catch (\Throwable $th) {
+            Log::error('Kesalahan Sistem: ' . $th->getMessage());
+            return response()->json(['msg' => "Terjadi Kesalahan", "msg_type" => "error"], 500);
+        }
+    }
+
+    public function galleryDetail(Request $request)
+    {
+
+        $slug = $request->slug;
+        
+        if($request->isMethod('POST')) {
+            try {
+                $validated = GalleryValidator::validate($request, $request->id);
+                if ($request->hasFile('banner')) {
+                    $image = $request->file('banner');
+                    $filename = sprintf('gb-%s', Str::uuid());
+                    $path = $this->fileService->saveFile($image, $filename, 'gallery-banners');
+
+                    $validated['banner'] = url($path);
+                }
+
+                if($request->id) {
+                    if(isset($validated['assets']) && is_array($validated['assets'])) {
+                        foreach($validated['assets'] as $assetId) {
+                            PageAssets::where('url', $assetId)->update(['page_id' => $request->id]);
+                        }
+                    }
+
+                    if(isset($validated['delete_assets']) && is_array($validated['delete_assets'])) {
+                        foreach($validated['delete_assets'] as $assetId) {
+                            if($this->fileService->deleteFile($assetId))
+                                PageAssets::where('url', $assetId)->delete();
+                        }
+                    }
+
+                    unset($validated['assets'],$validated['delete_assets']);
+                    Pages::where('id', $request->id)->update($validated);
+                    $item = Pages::where('id', $request->id)->first();
+                    $banner = $item?->banner;
+                    $message = "Galeri berhasil diperbarui";
+                } else {
+                    $validated['slug'] = Str::slug($validated['title']);
+                    if(Pages::where('slug', $validated['slug'])->exists()) {
+                        $validated['slug'] = sprintf('%s-%s',Str::slug($validated['title']), Pages::where('type','gallery')->count()+1);
+                    }
+
+                    $validated['type'] = 'gallery';
+                    $validated['created_by'] = auth('web')->user()->id;
+                    $validated['is_active'] = 'true';
+
+                    $newItem = Pages::create($validated);
+                    if(isset($validated['assets']) && is_array($validated['assets'])) {
+                        foreach($validated['assets'] as $assetId) {
+                            PageAssets::where('url', $assetId)->update(['page_id' => $newItem->id]);
+                        }
+                    }
+
+                    $banner = $newItem->banner;
+                    $message = "Galeri berhasil ditambahkan";
+                }
+
+                return response()->json(['msg_type' => "success", 'message' => $message, 'banner' => $banner ?? '#' ]);
+            } catch (\Throwable $th) {
+                Log::error('Kesalahan Sistem: ' . $th->getMessage());
+                return response()->json(['msg' => "Terjadi Kesalahan", "msg_type" => "error"], 500);
+            }
+            
+        }
+        elseif (!$request->isMethod('GET')) {
+            abort(405);
+        }
+
+        $item = Pages::where('slug', $slug)->first();
+        return view('admin.gallery.detail',[
+            'title' => $slug ? 'Edit Galeri' : 'Add Galeri',
+            'gallery' => $item,
+            'assets' => $item ? PageAssets::where('page_id', $item->id)->get('url')->map(fn($value) => $value->url)->toArray() : []
+        ]);
+        
+    }
+
+    public function changeStatus(Request $request)
+    {
+        try {
+            $request->validate([
+                'slug' => ['required','string'],
+                'is_active' => ['required',Rule::in(['true','false'])]
+            ]);
+
+            $page = Pages::where('slug', $request->slug)->first();
+            if(!$page) {
+                return response()->json(['msg_type' => "warning", 'message' => "Data tidak ditemukan"], 404);
+            }
+
+            $page->is_active = $request->is_active;
+            $page->save();
+
+            return response()->json(['msg_type' => "success", 'message' => "Status berhasil diupdate"]);
+        } catch (ValidationException $e) {
+            $errors = $e->validator->errors();
+            return response()->json(['msg_type' => "warning", 'message' => $errors], 400);
+        } catch (\Throwable $th) {
+            Log::error('Kesalahan Sistem: ' . $th->getMessage());
+            return response()->json(['msg' => "Terjadi Kesalahan", "msg_type" => "error"], 500);
+        }
+    }
+
+    public function deletePage(Request $request)
+    {
+        try {
+            $request->validate([
+                'slug' => ['required','string']
+            ]);
+
+            $page = Pages::where('slug', $request->slug)->first();
+            if(!$page) {
+                return response()->json(['msg_type' => "warning", 'message' => "Data tidak ditemukan"], 404);
+            }
+
+            DB::transaction(function () use($page) {
+                PageAssets::where('page_id', $page->id)->delete();
+                $page->delete();
+            });
+
+            return response()->json(['msg_type' => "success", 'message' => "Halaman berhasil dihapus"]);
+        } catch (ValidationException $e) {
+            $errors = $e->validator->errors();
+            return response()->json(['msg_type' => "warning", 'message' => $errors], 400);
+        } catch (\Throwable $th) {
+            Log::error('Kesalahan Sistem: ' . $th->getMessage());
+            return response()->json(['msg' => "Terjadi Kesalahan", "msg_type" => "error"], 500);
         }
     }
 

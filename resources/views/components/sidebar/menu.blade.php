@@ -25,6 +25,14 @@
                     {{-- <span class="badge bg-success float-end">9+</span> --}}
                 </a>
             </li>
+            
+            <li class="side-nav-item">
+                <a href="{{ route('admin.gallery') }}" class="side-nav-link">
+                    <i class="ri-compass-3-line"></i>
+                    <span> Galeri </span>
+                    {{-- <span class="badge bg-success float-end">9+</span> --}}
+                </a>
+            </li>
     
             <li class="side-nav-item">
                 <a href="{{ route('menus.tree') }}" class="side-nav-link">

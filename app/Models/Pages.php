@@ -21,6 +21,7 @@ class Pages extends Model
     protected $fillable = [
         'title',
         'slug',
+        'banner',
         'content', //nullable
         'type', //['gallery', 'blog']
         'is_active', //['true','false']
@@ -49,4 +50,5 @@ class Pages extends Model
             'tag_id'            // foreign key untuk model lain (Tags)
         );
     }
+    
 }
