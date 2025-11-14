@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [FrontController::class, 'index'])->name('beranda');
 Route::get('/artikel', [FrontController::class, 'blog']);
+Route::get('/galeri/{page}', [FrontController::class, 'gallery'])->name('galeri.detail');
 
 
 

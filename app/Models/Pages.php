@@ -51,4 +51,8 @@ class Pages extends Model
         );
     }
     
+    public function assets()
+    {
+        return $this->hasMany(PageAssets::class, 'page_id', 'id');
+    }
 }

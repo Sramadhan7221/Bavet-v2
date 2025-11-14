@@ -13,9 +13,18 @@ class FrontController extends Controller
 {
     public function index()
     {
+
+        $galleries = Pages::where('type', 'gallery')
+            ->where('is_active', 'true')
+            ->with('assets')
+            ->orderByDesc('created_at')
+            ->limit(10)
+            ->get();
+
         return view('home',[
             'hc' => HomeContent::first(),
-            'about' => AboutContent::first()
+            'about' => AboutContent::first(),
+            'galleries' => $galleries
         ]);
     }
 
@@ -66,12 +75,33 @@ class FrontController extends Controller
             ]);
         }
 
-        $artikelList = Pages::where('type', 'blog')
-            ->with('penulis')
-            ->orderByDesc('created_at')
-            ->paginate(5);
+        // $artikelList = Pages::where('type', 'blog')
+        //     ->with('penulis')
+        //     ->orderByDesc('created_at')
+        //     ->paginate(5);
             
-        dd($tag);
+        // dd($tag);
         
+    }
+
+    public function gallery($page)
+    {
+        $page = Pages::where('slug', $page)->with('assets')->first();
+        if(!$page) {
+            return abort(404);
+        }
+
+        $breadcrumb = [
+            ['current' => false, 'title' => "Beranda", 'url' => route('beranda')],
+            ['current' => true, 'title' => $page->title, 'url' => route('galeri.detail', ['page' => $page->slug])]
+        ];
+        
+        return view('gallery',[
+            'breadcrumb' => $breadcrumb,
+            'assets' => $page->assets->map(fn($value) => $value->url)->toArray(),
+            'gallery_title' => $page->title,
+            'desc' => $page->content
+        ]);
+
     }
 }
