@@ -34,4 +34,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('cms-gallery', [CMSController::class, 'gallery'])->name('admin.gallery');
     Route::any('cms-gallery-detail', [CMSController::class, 'galleryDetail'])->name('admin.gallery.detail');
+
+    Route::any('cms-tim', [CMSController::class, 'teams'])->name('admin.tim');
+    Route::get('cms-tim-detail/{id}', [CMSController::class, 'teamById']);
+    Route::post('cms-tim-delete', [CMSController::class, 'deleteTeam'])->name('admin.tim-delete');
+    Route::post('cms-tim-struktur', [CMSController::class, 'changeStrukturalStatus'])->name('admin.tim-struktur');
 });

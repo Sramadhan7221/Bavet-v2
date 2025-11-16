@@ -22,6 +22,7 @@ class HomeContent extends Model
         'title',
         'subtitle',
         'yt_link',
-        'image_hero'
+        'image_hero',
+        'maks_struktural'
     ];
 }

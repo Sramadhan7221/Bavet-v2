@@ -83,6 +83,7 @@
             ajax: "{{ route('admin.gallery') }}",
             columns: [
                 {
+                    className: "my-column",
                     mData: "DT_RowIndex",
                     orderable: false, 
                     searchable: false,

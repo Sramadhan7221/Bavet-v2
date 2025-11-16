@@ -11,7 +11,7 @@
                 <div class="card-body">
                     <!-- Dropzone Upload Section -->
                     <div class="upload-container">
-                        <h4 class="mb-4">Upload New Images</h4>
+                        <h4 class="mb-4">Upload Foto</h4>
                         <form action="{{ route('asset.upload') }}" class="dropzone" id="imageUpload">
                             @csrf
                         </form>

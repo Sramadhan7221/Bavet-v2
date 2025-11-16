@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AboutContent;
 use App\Models\HomeContent;
+use App\Models\Karyawan;
 use App\Models\Pages;
 use App\Services\BlogService;
 use Carbon\Carbon;
@@ -14,18 +15,20 @@ class FrontController extends Controller
     public function index()
     {
 
+        $hc = HomeContent::first();
+        $about = AboutContent::first();
         $galleries = Pages::where('type', 'gallery')
             ->where('is_active', 'true')
             ->with('assets')
             ->orderByDesc('created_at')
             ->limit(10)
             ->get();
+        $struktural = Karyawan::where('struktural', true)
+            ->orderBy('urutan')
+            ->limit($hc?->maks_struktural ?? 1)
+            ->get();
 
-        return view('home',[
-            'hc' => HomeContent::first(),
-            'about' => AboutContent::first(),
-            'galleries' => $galleries
-        ]);
+        return view('home', compact(['hc','about','galleries','struktural']));
     }
 
     public function blog(Request $request)

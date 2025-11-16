@@ -19,6 +19,7 @@ class HomeValidator
                 'title' => ['required', 'string'],
                 'subtitle' => ['required', 'string'],
                 'yt_link' => ['required', 'string'],
+                'maks_struktural' => ['required', 'number'],
                 'image_hero' => [ is_null($id) ? 'required' : 'nullable', 'file', 'mimes:jpg,png,jpeg', 'max:4096']
             ],
             [
@@ -28,6 +29,8 @@ class HomeValidator
                 'subtitle.string' => "Format Sub judul tidak sesuai",
                 'yt_link.required' => "Link Video Home harus diisi",
                 'yt_link.string' => "Format Link Video tidak sesuai",
+                'maks_struktural.required' => "Jumlah profil struktural yang akan ditampilkan harus diisi",
+                'maks_struktural.number' => "Masukan format yang valid",
                 'image_hero.required' => "Gambar Home harus diisi",
                 'image_hero.mimes' => "Upload gambar dengan format (jpg atau png)",
                 'image_hero.max' => "Upload gambar dengan ukuran kurang dari 4MB",

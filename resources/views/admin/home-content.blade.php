@@ -54,6 +54,22 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="form-group row mb-3">
+                                    <label class="col-sm-3">Profil Struktural</label>
+                                    <div class="col-sm-9">
+                                        <div class="row">
+                                            <div class="col-sm-11">
+                                                <input type="number" name="maks_struktural" id="maks_struktural" class="form-control" style="border-radius:5px;" value="{{ $content?->maks_struktural ?? "0" }}">
+                                                <p class="fs-6 text-muted">
+                                                   <i>Jumlah profil struktural yang akan ditampilkan di halaman utama</i>
+                                                </p>
+                                                <div class="invalid-feedback">
+                                                    Link Player Kosong
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-6">
                                 <div class="form-group row mb-3">
@@ -114,6 +130,7 @@
                 formData.append('title', $("#title").val());
                 formData.append('subtitle', $("#subtitle").val());
                 formData.append('yt_link', $("#yt_link").val());
+                formData.append('maks_struktural', $("#maks_struktural").val());
 
                 $.ajax({
                     url: "{{ route('admin.home') }}", 
@@ -165,6 +182,11 @@
                                     const errors = res.message.yt_link;
                                     $("#yt_link").siblings('.invalid-feedback').text(errors.join(","));
                                     $("#yt_link").addClass('is-invalid');
+                                }
+                                if(res.message.maks_struktural) {
+                                    const errors = res.message.maks_struktural;
+                                    $("#maks_struktural").siblings('.invalid-feedback').text(errors.join(","));
+                                    $("#maks_struktural").addClass('is-invalid');
                                 }
                                 if(res.message.image_hero) {
                                     const errors = res.message.image_hero;
