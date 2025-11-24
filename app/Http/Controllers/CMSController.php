@@ -8,8 +8,10 @@ use App\Models\Karyawan;
 use App\Models\Menus;
 use App\Models\PageAssets;
 use App\Models\Pages;
+use App\Models\Tags;
 use App\Services\FileService;
 use App\Validators\AboutValidator;
+use App\Validators\BeritaValidator;
 use App\Validators\GalleryValidator;
 use App\Validators\HomeValidator;
 use App\Validators\KaryawanValidator;
@@ -328,7 +330,7 @@ class CMSController extends Controller
                     ->addIndexColumn()
                     ->editColumn('created_at', function ($page) {
                         Carbon::setLocale('id');
-                        $date = Carbon::parse($page->tgl_lacreated_athir);
+                        $date = Carbon::parse($page->created_at);
                         $formattedDate = $date->translatedFormat('d F, Y');
                         return $formattedDate;
                     })
@@ -462,6 +464,11 @@ class CMSController extends Controller
             }
 
             DB::transaction(function () use ($page) {
+                $urls = PageAssets::where('page_id', $page->id)->pluck('url')->toArray();
+                foreach ($urls as $url) {
+                    if(!$this->fileService->deleteFile($url))
+                        Log::alert('[CMS] Gagal menghapus asset dengan url: ' . $url);
+                }
                 PageAssets::where('page_id', $page->id)->delete();
                 $page->delete();
             });
@@ -579,6 +586,146 @@ class CMSController extends Controller
             Log::error('Kesalahan Sistem: ' . $th->getMessage());
             return response()->json(['msg' => "Terjadi Kesalahan", "msg_type" => "error"], 500);
         }
+    }
+
+    public function berita(Request $request)
+    {
+        try {
+
+            if ($request->ajax()) {
+                $model = Pages::query()
+                    ->select(['slug', 'banner', 'title', 'is_active', 'created_at'])->where('type', 'blog')
+                    ->where('slug', '!=', 'about');
+
+                return DataTables::of($model)
+                    ->addIndexColumn()
+                    ->editColumn('created_at', function ($page) {
+                        Carbon::setLocale('id');
+                        $date = Carbon::parse($page->created_at);
+                        $formattedDate = $date->translatedFormat('d F, Y');
+                        return $formattedDate;
+                    })
+                    ->make(true);
+            }
+
+            return view('admin.berita.list', [
+                'title' => 'Berita'
+            ]);
+        } catch (ValidationException $e) {
+            $errors = $e->validator->errors();
+            return response()->json(['msg_type' => "warning", 'message' => $errors], 400);
+        } catch (\Throwable $th) {
+            Log::error('Kesalahan Sistem: ' . $th->getMessage());
+            return response()->json(['msg' => "Terjadi Kesalahan", "msg_type" => "error"], 500);
+        }
+    }
+
+    public function beritaDetail(Request $request)
+    {
+
+        $slug = $request->slug;
+
+        if ($request->isMethod('POST')) {
+            try {
+                $validated = BeritaValidator::validate($request, $request->id);
+                if ($request->hasFile('banner')) {
+                    $image = $request->file('banner');
+                    $filename = sprintf('pb-%s', Str::uuid());
+                    $path = $this->fileService->saveFile($image, $filename, 'page-banners');
+
+                    $validated['banner'] = url($path);
+                }
+
+                if ($request->id) {
+                    if (isset($validated['assets']) && is_array($validated['assets'])) {
+                        foreach ($validated['assets'] as $assetId) {
+                            PageAssets::where('url', $assetId)->update(['page_id' => $request->id]);
+                        }
+                    }
+
+                    if (isset($validated['delete_assets']) && is_array($validated['delete_assets'])) {
+                        foreach ($validated['delete_assets'] as $assetId) {
+                            if ($this->fileService->deleteFile($assetId))
+                                PageAssets::where('url', $assetId)->delete();
+                        }
+                    }
+
+                    if (isset($validated['tags']) && is_array($validated['tags'])) {
+                        $tagIds = [];
+                        foreach($validated['tags'] as $tagName) {
+                            $tag = Tags::where(DB::raw('LOWER(tag_name)'), $tagName)->first();
+                            if(!$tag)
+                                $tag = Tags::create(['tag_name' => $tagName]);
+                            $tagIds[] = $tag->id;                            
+                        }
+                        
+                        $page = Pages::find($request->id);
+                        $page->tags()->sync($tagIds);
+                    }
+
+                    unset($validated['assets'], $validated['delete_assets'], $validated['tags']);
+                    Pages::where('id', $request->id)->update($validated);
+                    $item = Pages::where('id', $request->id)->first();
+                    $banner = $item?->banner;
+                    $message = "Berita berhasil diperbarui";
+                } else {
+                    $validated['slug'] = Str::slug($validated['title']);
+                    if (Pages::where('slug', $validated['slug'])->exists()) {
+                        $validated['slug'] = sprintf('%s-%s', Str::slug($validated['title']), Pages::where('type', 'gallery')->count() + 1);
+                    }
+
+                    $validated['type'] = 'blog';
+                    $validated['created_by'] = auth('web')->user()->id;
+                    $validated['is_active'] = 'true';
+
+                    $newItem = Pages::create($validated);
+                    if (isset($validated['assets']) && is_array($validated['assets'])) {
+                        foreach ($validated['assets'] as $assetId) {
+                            PageAssets::where('url', $assetId)->update(['page_id' => $newItem->id]);
+                        }
+                    }
+
+                    if (isset($validated['tags']) && is_array($validated['tags'])) {
+                        $tagIds = [];
+                        foreach($validated['tags'] as $tagName) {
+                            $tag = Tags::where(DB::raw('LOWER(tag_name)'), $tagName)->first();
+                            if(!$tag)
+                                $tag = Tags::create(['tag_name' => $tagName]);
+                            $tagIds[] = $tag->id;                            
+                        }
+                        
+                        $newItem->tags()->sync($tagIds);
+                    }
+
+                    $banner = $newItem->banner;
+                    $message = "Berita berhasil ditambahkan";
+                }
+
+                return response()->json(['msg_type' => "success", 'message' => $message, 'banner' => $banner ?? '#']);
+            } catch (ValidationException $e) {
+                $message = collect($e->validator->errors()->all())->map(fn($v) => "<p>$v</p>")->implode('');
+                return response()->json(['message' => $message, 'msg_type' => 'warning'], 400);
+            } catch (\Throwable $th) {
+                Log::error('Kesalahan Sistem: ' . $th->getMessage());
+                return response()->json(['msg' => "Terjadi Kesalahan", "msg_type" => "error"], 500);
+            }
+        } elseif (!$request->isMethod('GET')) {
+            abort(405);
+        }
+
+        $item = Pages::where('slug', $slug)->with('tags')->first();
+        return view('admin.berita.detail', [
+            'title' => $slug ? 'Edit Berita' : 'Add Berita',
+            'berita' => $item
+        ]);
+    }
+
+    public function pageTags(Request $request)
+    {
+        $q = strtolower($request->q);
+        $data = Tags::where(DB::raw("LOWER(tag_name)"),'LIKE',"%$q%")->get(['id','tag_name']);
+
+        return response()->json(['success' => 1, 'msg' => "Berhasil",'data' => $data]);
     }
 
     private function saveImageAsset(UploadedFile $file, string $path, ?int $page_id = null, string $type = 'content'): PageAssets

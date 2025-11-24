@@ -2768,3 +2768,173 @@ section,
   color: color-mix(in srgb, var(--default-color), transparent 60%);
   font-size: 14px;
 }
+
+/*--------------------------------------------------------------
+# Recent Posts Slider
+--------------------------------------------------------------*/
+.recent-posts-slider {
+  position: relative;
+}
+
+.recent-posts-slider .swiper-slide {
+  height: auto;
+}
+
+.recent-posts-slider .post-item {
+  margin: 0;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  background-color: rgba(65, 84, 241, 0.15);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  color: var(--accent-color);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  background-color: var(--accent-color);
+  color: var(--contrast-color);
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 20px;
+}
+
+.swiper-pagination-bullet {
+  background-color: var(--accent-color);
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+
+.swiper-pagination-bullet.swiper-pagination-bullet-active {
+  opacity: 1;
+}
+
+/* Pause animation on hover */
+.recent-posts-slider:hover {
+  /* Swiper autoplay will be controlled via JavaScript */
+}
+
+/*--------------------------------------------------------------
+# Gallery Slider
+--------------------------------------------------------------*/
+.gallery-slider {
+  position: relative;
+}
+
+.gallery-slider .swiper-slide {
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gallery-slider .portfolio-item {
+  width: 100%;
+  margin: 0;
+}
+
+.gallery-slider .portfolio-content {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s ease;
+}
+
+.gallery-slider .portfolio-content img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.gallery-slider .portfolio-content:hover img {
+  transform: scale(1.05);
+}
+
+.gallery-slider .portfolio-info {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 20px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0) 100%);
+  color: var(--contrast-color);
+  opacity: 0;
+  transition: all 0.4s ease;
+  transform: translateY(20px);
+}
+
+.gallery-slider .portfolio-content:hover .portfolio-info {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.gallery-slider .portfolio-info h4 {
+  color: var(--contrast-color);
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.gallery-slider .portfolio-info p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.gallery-slider .portfolio-info a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background-color: var(--accent-color);
+  color: var(--contrast-color);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  margin-right: 8px;
+}
+
+.gallery-slider .portfolio-info a:hover {
+  background-color: color-mix(in srgb, var(--accent-color), transparent 20%);
+  transform: scale(1.1);
+}
+
+.gallery-slider .portfolio-info a i {
+  font-size: 16px;
+}
+
+/* Fade effect styling */
+.swiper-fade .swiper-slide {
+  opacity: 0;
+}
+
+.swiper-fade .swiper-slide.swiper-slide-active {
+  opacity: 1;
+}
+
+/* Gallery slider button positioning */
+.gallery-slider .swiper-button-prev,
+.gallery-slider .swiper-button-next {
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+.gallery-slider .swiper-button-prev {
+  left: 10px;
+}
+
+.gallery-slider .swiper-button-next {
+  right: 10px;
+}

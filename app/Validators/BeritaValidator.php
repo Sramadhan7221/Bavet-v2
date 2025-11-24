@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Mews\Purifier\Facades\Purifier;
 
-class GalleryValidator
+class BeritaValidator
 {
     public static function validate(Request $request, $id = null): array
     {
@@ -17,6 +17,9 @@ class GalleryValidator
         }
         if (isset($params['delete_assets']) && is_string($params['delete_assets'])) {
             $params['delete_assets'] = json_decode($params['delete_assets'], true);
+        }
+        if (isset($params['tags']) && is_string($params['tags'])) {
+            $params['tags'] = json_decode($params['tags'], true);
         }
 
         $validator = Validator::make(
@@ -28,7 +31,8 @@ class GalleryValidator
                 'content' => ['nullable', 'string'],
                 // 'is_active' => ['required', Rule::in(['true','false'])],
                 'assets' => ['nullable', 'array'],
-                'delete_assets' => ['nullable', 'array']
+                'delete_assets' => ['nullable', 'array'],
+                'tags' => ['nullable', 'array']
             ],
             [
                 'title.required' => "Judul harus diisi",
@@ -49,8 +53,8 @@ class GalleryValidator
         }
 
         $validatedData = $validator->validated();
-        $validatedData['content'] = Purifier::clean($validatedData['content']);
-
+        // $cleaningData = Purifier::clean($validatedData['content'], 'question');
+        // dd($cleaningData, $validatedData['content']);
         return $validatedData;
     }
 }

@@ -165,7 +165,57 @@
     });
   }
 
+  /**
+   * Init recent posts slider with hover pause
+   */
+  function initRecentPostsSlider() {
+    const sliderElement = document.querySelector("#recentPostsSlider");
+    if (!sliderElement) return;
+
+    let config = JSON.parse(
+      sliderElement.querySelector(".swiper-config").innerHTML.trim()
+    );
+
+    const swiper = new Swiper(sliderElement, config);
+
+    // Pause autoplay on hover
+    sliderElement.addEventListener("mouseenter", () => {
+      swiper.autoplay.stop();
+    });
+
+    // Resume autoplay on mouse leave
+    sliderElement.addEventListener("mouseleave", () => {
+      swiper.autoplay.start();
+    });
+  }
+
+  /**
+   * Init gallery slider with hover pause
+   */
+  function initGallerySlider() {
+    const sliderElement = document.querySelector("#gallerySlider");
+    if (!sliderElement) return;
+
+    let config = JSON.parse(
+      sliderElement.querySelector(".swiper-config").innerHTML.trim()
+    );
+
+    const swiper = new Swiper(sliderElement, config);
+
+    // Pause autoplay on hover
+    sliderElement.addEventListener("mouseenter", () => {
+      swiper.autoplay.stop();
+    });
+
+    // Resume autoplay on mouse leave
+    sliderElement.addEventListener("mouseleave", () => {
+      swiper.autoplay.start();
+    });
+  }
+
   window.addEventListener("load", initSwiper);
+  window.addEventListener("load", initRecentPostsSlider);
+  window.addEventListener("load", initGallerySlider);
 
   /**
    * Correct scrolling position upon page load for URLs containing hash links.

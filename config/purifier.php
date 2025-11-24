@@ -34,8 +34,14 @@ return [
             'Attr.EnableID' => 'true',
         ],
         'konten' => [
-            'HTML.Allowed' => 'div,b,strong,i,em,u,a[href|title],ul,ol,li,p[style],br,span[style],img[width|height|alt|src]',
+            'HTML.Allowed' => 'div,b,strong,i,em,u,a[href|title],ul,ol,li,p[style],br,span[style],img[width|height|alt|src|style]',
+            'CSS.AllowedProperties' => 'font,font-size,font-weight,font-style,font-family,text-decoration,padding-left,color,background-color,text-align,width,max-width,height,max-height',
+            'HTML.Proprietary' => true, // Add this line
+        ],
+        'question' => [
+            'HTML.Allowed' => 'div[align],b,strong,i,em,u,a[href|title],ul,ol,li,p[style],br,span[style],img[width|height|alt|src]',
             'CSS.AllowedProperties' => 'font,font-size,font-weight,font-style,font-family,text-decoration,padding-left,color,background-color,text-align,width',
+            'AutoFormat.RemoveEmpty' => false
         ],
         "youtube" => [
             "HTML.SafeIframe"      => 'true',

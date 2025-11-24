@@ -30,9 +30,14 @@ return new class extends Migration
 
         Schema::create('page_assets', function(Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('page_id')->nullable()->constrained(
-                table: 'pages', indexName: 'page_assets_page_id'
-            );
+            $table->foreignId('page_id')
+                ->nullable()
+                ->constrained(
+                    table: 'pages', 
+                    indexName: 'page_assets_page_id'
+                )
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
             $table->string('url');
             $table->enum('type', ['cover', 'content'])->default('content');
             $table->timestamps();

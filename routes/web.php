@@ -6,7 +6,8 @@ use App\Http\Controllers\FrontController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [FrontController::class, 'index'])->name('beranda');
-Route::get('/artikel', [FrontController::class, 'blog']);
+Route::get('/artikel', [FrontController::class, 'blog'])->name('artikel.detail');
+Route::get('/artikel-search', [FrontController::class, 'blogSearch'])->name('artikel.cari');
 Route::get('/galeri/{page}', [FrontController::class, 'gallery'])->name('galeri.detail');
 
 
@@ -39,4 +40,8 @@ Route::middleware('auth')->group(function () {
     Route::get('cms-tim-detail/{id}', [CMSController::class, 'teamById']);
     Route::post('cms-tim-delete', [CMSController::class, 'deleteTeam'])->name('admin.tim-delete');
     Route::post('cms-tim-struktur', [CMSController::class, 'changeStrukturalStatus'])->name('admin.tim-struktur');
+    
+    Route::get('cms-page', [CMSController::class, 'berita'])->name('admin.berita');
+    Route::any('cms-page-detail', [CMSController::class, 'beritaDetail'])->name('admin.berita.detail');    
+    Route::get('page-tags', [CMSController::class, 'pageTags'])->name('admin.berita.tags');    
 });

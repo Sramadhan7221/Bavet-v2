@@ -14,17 +14,7 @@
 
     <!-- Page Title -->
     <div class="page-title">
-      <div class="heading">
-        {{-- <div class="container">
-          <div class="row d-flex justify-content-center text-center">
-            <div class="col-lg-8">
-              <h1>Blog Details</h1>
-              <p class="mb-0">Odio et unde deleniti. Deserunt numquam exercitationem. Officiis quo odio sint voluptas consequatur ut a odio voluptatem. Sit dolorum debitis veritatis natus dolores. Quasi ratione sint. Sit quaerat ipsum dolorem.</p>
-            </div>
-          </div>
-        </div> --}}
-      </div>
-      <nav class="breadcrumbs">
+      <nav class="breadcrumbs my-2">
         <div class="container">
           <ol>
             @foreach ($breadcrumb as $item)
@@ -91,9 +81,15 @@
                 <div>
                   <h4>{{ $penulis?->name }}</h4>
                   <div class="social-links">
-                    <a href="{{ $penulis?->tiktok }}"><i class="bi bi-tiktok"></i></a>
-                    <a href="{{ $penulis?->facebook }}"><i class="bi bi-facebook"></i></a>
-                    <a href="{{ $penulis?->instagram }}"><i class="biu bi-instagram"></i></a>
+                    @if ($penulis?->tiktok)
+                      <a href="{{ $penulis?->tiktok }}"><i class="bi bi-tiktok"></i></a>
+                    @endif
+                    @if ($penulis?->facebook)
+                      <a href="{{ $penulis?->facebook }}"><i class="bi bi-facebook"></i></a>
+                    @endif
+                    @if ($penulis?->instagram)
+                      <a href="{{ $penulis?->instagram }}"><i class="biu bi-instagram"></i></a>
+                    @endif
                   </div>
                   <p>
                     {{ $penulis?->bio ?? '-- Tidak ada bio --' }}
@@ -111,15 +107,15 @@
           <div class="widgets-container">
 
             <!-- Search Widget -->
-            {{-- <div class="search-widget widget-item">
+            <div class="search-widget widget-item">
 
               <h3 class="widget-title">Cari</h3>
               <form action="">
-                <input type="text">
-                <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+                <input type="text" id="terms" placeholder="Cari..">
+                <button type="button" title="Search" class="cari"><i class="bi bi-search"></i></button>
               </form>
 
-            </div> --}}
+            </div>
             <!--/Search Widget -->
 
             <!-- Recent Posts Widget -->
@@ -167,6 +163,11 @@
   <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   @include('partials.scripts')
+  <script>
+    document.querySelector(".cari").addEventListener("click", function() {
+      window.location.href = "{{ route('artikel.cari') }}" + "?query=" + document.getElementById("terms").value;
+    });
+  </script>
 
 </body>
 
