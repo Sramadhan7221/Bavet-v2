@@ -43,5 +43,9 @@ Route::middleware('auth')->group(function () {
     
     Route::get('cms-page', [CMSController::class, 'berita'])->name('admin.berita');
     Route::any('cms-page-detail', [CMSController::class, 'beritaDetail'])->name('admin.berita.detail');    
-    Route::get('page-tags', [CMSController::class, 'pageTags'])->name('admin.berita.tags');    
+    Route::get('page-tags', [CMSController::class, 'pageTags'])->name('admin.berita.tags'); 
+    
+    Route::any('cms-layanan', [CMSController::class, 'services'])->name('admin.services');
+    Route::get('cms-layanan-detail/{id}', [CMSController::class, 'serviceById']);
+    Route::post('cms-layanan-delete', [CMSController::class, 'deleteService'])->name('admin.services-delete');   
 });
