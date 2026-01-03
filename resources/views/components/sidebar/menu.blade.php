@@ -11,6 +11,14 @@
             </li>
             
             <li class="side-nav-item">
+                <a href="{{ route('admin.services') }}" class="side-nav-link">
+                    <i class="ri-compass-3-line"></i>
+                    <span> Layanan Utama </span>
+                    {{-- <span class="badge bg-success float-end">9+</span> --}}
+                </a>
+            </li>
+            
+            <li class="side-nav-item">
                 <a href="{{ route('admin.home') }}" class="side-nav-link">
                     <i class="ri-compass-3-line"></i>
                     <span> Beranda Content </span>
@@ -26,12 +34,12 @@
                 </a>
             </li>
             
-            <li class="side-nav-item">
+            {{-- <li class="side-nav-item">
                 <a href="{{ route('admin.tim') }}" class="side-nav-link">
                     <i class="ri-compass-3-line"></i>
                     <span> Profil Pegawai </span>
                 </a>
-            </li>
+            </li> --}}
             
             <li class="side-nav-item">
                 <a href="{{ route('admin.gallery') }}" class="side-nav-link">
@@ -47,7 +55,7 @@
                 </a>
             </li>
     
-            <li class="side-nav-item">
+            {{-- <li class="side-nav-item">
                 <a href="{{ route('menus.tree') }}" class="side-nav-link">
                     <i class="ri-compass-3-line"></i>
                     <span> Manajemen Menu</span>
@@ -55,9 +63,9 @@
                 </a>
             </li>
 
-            <li class="side-nav-title">Menu</li>
+            <li class="side-nav-title">Menu</li> --}}
     
-            @foreach ($menus as $menu)
+            {{-- @foreach ($menus as $menu)
                 @if (is_null($menu->module) && $menu->type == 'module' && count($menu->children) > 0)
                     <x-sidebar.item-multiples 
                         :title="$menu->title" 
@@ -72,6 +80,6 @@
                     />
                 @endif
                 
-            @endforeach
+            @endforeach --}}
         </ul>
     </div>

@@ -3,7 +3,7 @@
 @section('title', $title)
 
 @section('content')
-<div class="container-fluid">
+{{-- <div class="container-fluid">
 
     <div class="row">
         <div class="col-xl-4">
@@ -724,7 +724,7 @@
         </div><!-- end col-->
     </div>
     <!-- end row -->
-</div>
+</div> --}}
 @endsection
 
 @push('styles')

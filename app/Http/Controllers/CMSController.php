@@ -8,6 +8,7 @@ use App\Models\Karyawan;
 use App\Models\Menus;
 use App\Models\PageAssets;
 use App\Models\Pages;
+use App\Models\Service;
 use App\Models\Tags;
 use App\Services\FileService;
 use App\Validators\AboutValidator;
@@ -16,6 +17,7 @@ use App\Validators\GalleryValidator;
 use App\Validators\HomeValidator;
 use App\Validators\KaryawanValidator;
 use App\Validators\MenuValidator;
+use App\Validators\ServiceValidator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -33,164 +35,164 @@ class CMSController extends Controller
 
     public function __construct(private FileService $fileService) {}
 
-    public function menuList(Request $request)
-    {
-        if ($request->isMethod('POST')) {
-            try {
-                $validated = MenuValidator::validate($request, $request->id);
-                $sameSlug = Menus::where('slug', $validated['slug'])->count();
-                $message = "Menu berhasil ditambahkan, silahkan refresh halaman untuk menampilkan menu pada sidebar";
-                $parent = null;
+    // public function menuList(Request $request)
+    // {
+    //     if ($request->isMethod('POST')) {
+    //         try {
+    //             $validated = MenuValidator::validate($request, $request->id);
+    //             $sameSlug = Menus::where('slug', $validated['slug'])->count();
+    //             $message = "Menu berhasil ditambahkan, silahkan refresh halaman untuk menampilkan menu pada sidebar";
+    //             $parent = null;
 
-                DB::transaction(function () use ($sameSlug, $validated, $request, &$message, &$parent) {
-                    if ($sameSlug > 0) {
-                        $validated['slug'] = sprintf('%s-%s', $validated['slug'], $sameSlug);
-                    }
+    //             DB::transaction(function () use ($sameSlug, $validated, $request, &$message, &$parent) {
+    //                 if ($sameSlug > 0) {
+    //                     $validated['slug'] = sprintf('%s-%s', $validated['slug'], $sameSlug);
+    //                 }
 
-                    if ($request->filled('parent_id') && !is_numeric($request->parent_id)) {
-                        $parentMenu = Menus::create([
-                            'title' => $request->parent_id,
-                            'slug' => Str::slug($request->parent_id),
-                            'type' => 'parent',
-                            'is_active' => 'true',
-                            'created_by' => auth('web')->user()->id
-                        ]);
-                        $validated['parent_id'] = $parentMenu->id;
-                        $parent = ['id' => $parentMenu->id, 'title' => $parentMenu->title];
-                    }
+    //                 if ($request->filled('parent_id') && !is_numeric($request->parent_id)) {
+    //                     $parentMenu = Menus::create([
+    //                         'title' => $request->parent_id,
+    //                         'slug' => Str::slug($request->parent_id),
+    //                         'type' => 'parent',
+    //                         'is_active' => 'true',
+    //                         'created_by' => auth('web')->user()->id
+    //                     ]);
+    //                     $validated['parent_id'] = $parentMenu->id;
+    //                     $parent = ['id' => $parentMenu->id, 'title' => $parentMenu->title];
+    //                 }
 
-                    if ($request->filled('id')) {
-                        $menu = Menus::where('id', $request->id)
-                            ->lockForUpdate()
-                            ->first();
+    //                 if ($request->filled('id')) {
+    //                     $menu = Menus::where('id', $request->id)
+    //                         ->lockForUpdate()
+    //                         ->first();
 
-                        if ($menu->type !== 'parent')
-                            $menu->type = $validated['type'];
+    //                     if ($menu->type !== 'parent')
+    //                         $menu->type = $validated['type'];
 
-                        $menu->title = $validated['title'];
-                        $menu->external_url = $validated['external_url'];
-                        $menu->parent_id = $validated['parent_id'];
-                        $menu->is_active = $validated['is_active'];
+    //                     $menu->title = $validated['title'];
+    //                     $menu->external_url = $validated['external_url'];
+    //                     $menu->parent_id = $validated['parent_id'];
+    //                     $menu->is_active = $validated['is_active'];
 
-                        $menu->save();
-                        $message = "Berhasil update menu " . $validated['title'];
-                    } else {
-                        $validated['created_by'] = auth('web')->user()->id;
-                        Menus::create($validated);
-                    }
-                });
+    //                     $menu->save();
+    //                     $message = "Berhasil update menu " . $validated['title'];
+    //                 } else {
+    //                     $validated['created_by'] = auth('web')->user()->id;
+    //                     Menus::create($validated);
+    //                 }
+    //             });
 
-                return response()->json(['msg_type' => "success", 'message' => $message, 'with_parent' => $parent]);
-            } catch (ValidationException $e) {
-                $errors = $e->validator->errors();
-                return response()->json(['msg_type' => "warning", 'message' => $errors], 400);
-            } catch (\Throwable $th) {
-                Log::error('[MenuController] System Error: ' . $th->getMessage() . ' at line ' . $th->getLine());
-                return response()->json(['msg_type' => "error", 'message' => 'Terjadi kesalahan. Silahkan coba beberapa saat.'], 500);
-            }
-        }
+    //             return response()->json(['msg_type' => "success", 'message' => $message, 'with_parent' => $parent]);
+    //         } catch (ValidationException $e) {
+    //             $errors = $e->validator->errors();
+    //             return response()->json(['msg_type' => "warning", 'message' => $errors], 400);
+    //         } catch (\Throwable $th) {
+    //             Log::error('[MenuController] System Error: ' . $th->getMessage() . ' at line ' . $th->getLine());
+    //             return response()->json(['msg_type' => "error", 'message' => 'Terjadi kesalahan. Silahkan coba beberapa saat.'], 500);
+    //         }
+    //     }
 
-        if ($request->ajax()) {
-            $parentId = $request->get('parentId', null);
+    //     if ($request->ajax()) {
+    //         $parentId = $request->get('parentId', null);
 
-            // Ambil root jika tidak ada parentId, atau anak dari parent tertentu
-            $menus = Menus::where('parent_id', $parentId)->orderBy('order_seq')->get();
+    //         // Ambil root jika tidak ada parentId, atau anak dari parent tertentu
+    //         $menus = Menus::where('parent_id', $parentId)->orderBy('order_seq')->get();
 
-            $response = $menus->map(function ($menu) {
-                return [
-                    'title'  => $menu->title,
-                    'key'    => (string) $menu->id,  // key harus string
-                    'folder' => $menu->type == 'parent', // folder jika punya anak
-                    'lazy'   => $menu->type == 'parent', // lazy load anak
-                    'slug'   => $menu->slug,
-                    'menu_type'   => $menu->type,
-                    'menu_id' => $menu->id
-                ];
-            });
+    //         $response = $menus->map(function ($menu) {
+    //             return [
+    //                 'title'  => $menu->title,
+    //                 'key'    => (string) $menu->id,  // key harus string
+    //                 'folder' => $menu->type == 'parent', // folder jika punya anak
+    //                 'lazy'   => $menu->type == 'parent', // lazy load anak
+    //                 'slug'   => $menu->slug,
+    //                 'menu_type'   => $menu->type,
+    //                 'menu_id' => $menu->id
+    //             ];
+    //         });
 
-            return response()->json($response);
-        }
+    //         return response()->json($response);
+    //     }
 
-        return view('admin.menus', [
-            'title' => 'Menu Management',
-        ]);
-    }
+    //     return view('admin.menus', [
+    //         'title' => 'Menu Management',
+    //     ]);
+    // }
 
-    public function searchParent(Request $request)
-    {
-        $q = strtolower($request->q);
-        $data = Menus::where('type', 'parent')->where(DB::raw("LOWER(title)"), 'LIKE', "%$q%")->get(['id', 'title']);
+    // public function searchParent(Request $request)
+    // {
+    //     $q = strtolower($request->q);
+    //     $data = Menus::where('type', 'parent')->where(DB::raw("LOWER(title)"), 'LIKE', "%$q%")->get(['id', 'title']);
 
-        return response()->json(['success' => 1, 'msg' => "Berhasil", 'data' => $data]);
-    }
+    //     return response()->json(['success' => 1, 'msg' => "Berhasil", 'data' => $data]);
+    // }
 
-    public function menuReorder(Request $request)
-    {
-        $validator = Validator::make($request->all(), ['menu_list' => 'required|array']);
-        if ($validator->fails()) {
-            return response()->json(['msg' => "Invalid Request", "msg_type" => "error"], 400);
-        }
+    // public function menuReorder(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), ['menu_list' => 'required|array']);
+    //     if ($validator->fails()) {
+    //         return response()->json(['msg' => "Invalid Request", "msg_type" => "error"], 400);
+    //     }
 
-        try {
-            DB::transaction(function () use ($validator) {
-                $validated = $validator->validate();
-                $menus = Menus::whereIn('id', $validated['menu_list'])
-                    ->lockForUpdate()
-                    ->get()
-                    ->keyBy('id');
+    //     try {
+    //         DB::transaction(function () use ($validator) {
+    //             $validated = $validator->validate();
+    //             $menus = Menus::whereIn('id', $validated['menu_list'])
+    //                 ->lockForUpdate()
+    //                 ->get()
+    //                 ->keyBy('id');
 
-                foreach ($validated['menu_list'] as $index => $itemId) {
-                    if (!isset($menus[$itemId])) {
-                        throw new \Exception("ID $itemId not found or not accessible.");
-                    }
+    //             foreach ($validated['menu_list'] as $index => $itemId) {
+    //                 if (!isset($menus[$itemId])) {
+    //                     throw new \Exception("ID $itemId not found or not accessible.");
+    //                 }
 
-                    $menus[$itemId]->update(['order_seq' => $index + 1]);
-                }
-            });
+    //                 $menus[$itemId]->update(['order_seq' => $index + 1]);
+    //             }
+    //         });
 
-            return response()->json(['msg_type' => "success", 'message' => "Urutan menu berhasil diupdate"]);
-        } catch (\Throwable $th) {
-            Log::error('[MenuController] System Error: ' . $th->getMessage() . ' at line ' . $th->getLine());
-            return response()->json(['msg_type' => "error", 'message' => 'Terjadi kesalahan. Silahkan coba beberapa saat.'], 500);
-        }
-    }
+    //         return response()->json(['msg_type' => "success", 'message' => "Urutan menu berhasil diupdate"]);
+    //     } catch (\Throwable $th) {
+    //         Log::error('[MenuController] System Error: ' . $th->getMessage() . ' at line ' . $th->getLine());
+    //         return response()->json(['msg_type' => "error", 'message' => 'Terjadi kesalahan. Silahkan coba beberapa saat.'], 500);
+    //     }
+    // }
 
-    public function menuDetail($id)
-    {
-        $menu = Menus::find($id);
-        return response()->json(['data' => $menu]);
-    }
+    // public function menuDetail($id)
+    // {
+    //     $menu = Menus::find($id);
+    //     return response()->json(['data' => $menu]);
+    // }
 
-    public function menuDelete(Request $request)
-    {
-        $validator = Validator::make($request->all(), ['code' => 'required']);
-        if ($validator->fails()) {
-            return response()->json(['msg' => "Invalid Request", "msg_type" => "error"], 400);
-        }
+    // public function menuDelete(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), ['code' => 'required']);
+    //     if ($validator->fails()) {
+    //         return response()->json(['msg' => "Invalid Request", "msg_type" => "error"], 400);
+    //     }
 
-        try {
-            $id = $request->code;
-            $menu = Menus::where('id', $id)
-                ->with('children')
-                ->first();
+    //     try {
+    //         $id = $request->code;
+    //         $menu = Menus::where('id', $id)
+    //             ->with('children')
+    //             ->first();
 
-            if (!$menu) {
-                return response()->json(['msg' => "Gagal dihapus, menu tidak ditemukan. kemungkinan menu telah dihapus", "msg_type" => "warning"], 400);
-            }
+    //         if (!$menu) {
+    //             return response()->json(['msg' => "Gagal dihapus, menu tidak ditemukan. kemungkinan menu telah dihapus", "msg_type" => "warning"], 400);
+    //         }
 
-            if ($menu->type == 'parent' && count($menu->children) > 0) {
-                return response()->json(['msg' => "Gagal dihapus, menu memiliki sub-menu. silahkan hapus sub-menu terkait", "msg_type" => "warning"], 400);
-            }
+    //         if ($menu->type == 'parent' && count($menu->children) > 0) {
+    //             return response()->json(['msg' => "Gagal dihapus, menu memiliki sub-menu. silahkan hapus sub-menu terkait", "msg_type" => "warning"], 400);
+    //         }
 
-            if (Menus::where('id', $id)->delete())
-                return response()->json(['msg' => "Menu berhasil dihapus", "msg_type" => "success"]);
-            else
-                return response()->json(['msg' => "Menu gagal dihapus", "msg_type" => "warning"]);
-        } catch (\Throwable $th) {
-            Log::error('Kesalahan Sistem: ' . $th->getMessage());
-            return response()->json(['msg' => "Terjadi Kesalahan", "msg_type" => "error"], 500);
-        }
-    }
+    //         if (Menus::where('id', $id)->delete())
+    //             return response()->json(['msg' => "Menu berhasil dihapus", "msg_type" => "success"]);
+    //         else
+    //             return response()->json(['msg' => "Menu gagal dihapus", "msg_type" => "warning"]);
+    //     } catch (\Throwable $th) {
+    //         Log::error('Kesalahan Sistem: ' . $th->getMessage());
+    //         return response()->json(['msg' => "Terjadi Kesalahan", "msg_type" => "error"], 500);
+    //     }
+    // }
 
 
     public function home(Request $request)
@@ -726,6 +728,89 @@ class CMSController extends Controller
         $data = Tags::where(DB::raw("LOWER(tag_name)"),'LIKE',"%$q%")->get(['id','tag_name']);
 
         return response()->json(['success' => 1, 'msg' => "Berhasil",'data' => $data]);
+    }
+
+    public function services(Request $request)
+    {
+        if($request->isMethod('POST')) {
+            try {
+                $validated = ServiceValidator::validate($request);
+
+                if($request->has('icon')) {
+                    $image = $request->file('icon');
+                    $filename = sprintf('layanan-%s', Str::uuid());
+                    $path = $this->fileService->saveFile($image, $filename, 'layanan');
+                    $validated['icon'] = '<img src="'.url($path).'" width="76" height="76">';
+                }
+
+                if($request->has('banner')) {
+                    $image = $request->file('banner');
+                    $filename = sprintf('banner-%s', Str::uuid());
+                    $path = $this->fileService->saveFile($image, $filename, 'layanan');
+                    $validated['banner'] = url($path);
+                }
+
+                if(isset($validated['id']))
+                {
+                    Service::where('id', $validated['id'])->update($validated);
+                    return response()->json(['msg_type' => "success", 'message' => "Update berhasil"]);
+                }
+                else {
+                    Service::create($validated);
+                    return response()->json(['msg_type' => "success", 'message' => "Simpan berhasil"]);
+                }
+            } catch (ValidationException $e) {
+                $errors = $e->validator->errors();
+                return response()->json(['msg_type' => "warning", 'message' => $errors], 400);
+            } catch (\Throwable $th) {
+                Log::error('[CMS] System Error: ' . $th->getMessage() . ' at line ' . $th->getLine());
+                return response()->json(['message' => 'Terjadi Kesalahan, silahkan coba beberapa saat lagi', 'msg_type' => 'error'], 500);
+            }  
+        }
+
+        if($request->ajax())
+        {
+            $model = Service::query()
+                ->select(['id','title','desc','icon']);
+
+            return DataTables::of($model)
+            ->addIndexColumn()
+            ->rawColumns(['icon'])
+            ->make(true);
+        }
+
+        return view('admin.services', [
+            'title' => 'Layanan Utama'
+        ]);
+    }
+
+    public function serviceById($id)
+    {
+        $team = Service::where('id', $id)->select(['icon','banner','title','desc','content'])->first(); 
+        return response()->json(['msg' => "Berhasil",'msg_type' => 'success','data' => $team]);
+    }
+
+    public function deleteService(Request $request)
+    {
+        try {
+            $request->validate([
+                'id' => ['required', 'string']
+            ]);
+
+            $team = Service::where('id', $request->id)->first();
+            if (!$team) {
+                return response()->json(['msg_type' => "warning", 'message' => "Data tidak ditemukan"], 404);
+            }
+
+            $team->delete();
+            return response()->json(['msg_type' => "success", 'message' => "Data berhasil dihapus"]);
+        } catch (ValidationException $e) {
+            $errors = $e->validator->errors();
+            return response()->json(['msg_type' => "warning", 'message' => $errors], 400);
+        } catch (\Throwable $th) {
+            Log::error('Kesalahan Sistem: ' . $th->getMessage());
+            return response()->json(['msg' => "Terjadi Kesalahan", "msg_type" => "error"], 500);
+        }
     }
 
     private function saveImageAsset(UploadedFile $file, string $path, ?int $page_id = null, string $type = 'content'): PageAssets

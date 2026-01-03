@@ -17,23 +17,23 @@ class HomeValidator
             [
                 'id' => 'nullable',
                 'title' => ['required', 'string'],
-                'subtitle' => ['required', 'string'],
+                'subtitle' => ['nullable', 'string'],
                 'yt_link' => ['required', 'string'],
-                'maks_struktural' => ['required', 'number'],
+                // 'maks_struktural' => ['required', 'number'],
                 'image_hero' => [ is_null($id) ? 'required' : 'nullable', 'file', 'mimes:jpg,png,jpeg', 'max:4096']
             ],
             [
-                'title.required' => "Judul Home harus diisi",
-                'title.string' => "Format Judul tidak sesuai",
-                'subtitle.required' => "Sub judul Home harus diisi",
-                'subtitle.string' => "Format Sub judul tidak sesuai",
+                'title.required' => "Motto harus diisi",
+                'title.string' => "Format Motto tidak sesuai",
+                // 'subtitle.required' => "Sub judul Home harus diisi",
+                'subtitle.string' => "Format Deskripsi tidak sesuai",
                 'yt_link.required' => "Link Video Home harus diisi",
                 'yt_link.string' => "Format Link Video tidak sesuai",
-                'maks_struktural.required' => "Jumlah profil struktural yang akan ditampilkan harus diisi",
-                'maks_struktural.number' => "Masukan format yang valid",
-                'image_hero.required' => "Gambar Home harus diisi",
-                'image_hero.mimes' => "Upload gambar dengan format (jpg atau png)",
-                'image_hero.max' => "Upload gambar dengan ukuran kurang dari 4MB",
+                // 'maks_struktural.required' => "Jumlah profil struktural yang akan ditampilkan harus diisi",
+                // 'maks_struktural.number' => "Masukan format yang valid",
+                'image_hero.required' => "Gambar sampul harus diisi",
+                'image_hero.mimes' => "Upload gambar sampul dengan format (jpg atau png)",
+                'image_hero.max' => "Upload gambar sampul dengan ukuran kurang dari 4MB",
             ]
         );
 

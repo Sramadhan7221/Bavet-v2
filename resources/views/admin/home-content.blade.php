@@ -15,13 +15,13 @@
                             <div class="col-6">
                                 @csrf
                                 <div class="form-group row mb-3">
-                                    <label class="col-sm-3">Judul</label>
+                                    <label class="col-sm-3">Motto</label>
                                     <div class="col-sm-9">
                                     <div class="row">
                                         <div class="col-sm-11">
                                             <input type="text" name="title" id="title" class="form-control" style="border-radius:5px;" value="{{ $content?->title ?? "" }}">
                                             <div class="invalid-feedback">
-                                                Judul kosong
+                                                Motto kosong
                                             </div>
                                             <input type="hidden" name="id" id="id" value="{{ $content?->id ?? "" }}">
                                         </div>
@@ -29,18 +29,20 @@
                                     </div>
                                 </div>
                                 <div class="form-group row mb-3">
-                                    <label class="col-sm-3">Sub judul</label>
+                                    <label class="col-sm-3">Deskripsi</label>
                                     <div class="col-sm-9">
                                         <div class="row">
                                             <div class="col-sm-11">
                                                 <textarea name="subtitle" id="subtitle" class="form-control" style="border-radius:5px;" cols="3" rows="3">{{ $content?->subtitle ?? "" }}</textarea>
                                                 <div class="invalid-feedback">
-                                                    Sub Judul kosong
+                                                    Deskripsi kosong
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-6">
                                 <div class="form-group row mb-3">
                                     <label class="col-sm-3">Link Youtube</label>
                                     <div class="col-sm-9">
@@ -55,50 +57,33 @@
                                     </div>
                                 </div>
                                 <div class="form-group row mb-3">
-                                    <label class="col-sm-3">Profil Struktural</label>
-                                    <div class="col-sm-9">
-                                        <div class="row">
-                                            <div class="col-sm-11">
-                                                <input type="number" name="maks_struktural" id="maks_struktural" class="form-control" style="border-radius:5px;" value="{{ $content?->maks_struktural ?? "0" }}">
-                                                <p class="fs-6 text-muted">
-                                                   <i>Jumlah profil struktural yang akan ditampilkan di halaman utama</i>
-                                                </p>
-                                                <div class="invalid-feedback">
-                                                    Link Player Kosong
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="form-group row mb-3">
-                                    <label class="col-sm-3">Gambar</label>
+                                    <label class="col-sm-3">Gambar Sampul</label>
                                     <div class="col-sm-9">
                                         <div class="row">
                                             <div class="col-sm-11">
                                                <input type="file" name="image_hero" id="image_hero">
                                                 <div class="invalid-feedback">
-                                                    Gambar kosong
+                                                    Gambar Sampul kosong
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group row mb-3">
-                                    <img src="{{  $content?->image_hero ?? "#" }}" alt="" class="img-fluid">
-                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-outline-primary rounded-pill" data-toggle="tooltip" data-placement="top" title="Simpan input" id="addRecord">
+                                <i class="ri-add-circle-line"></i> Simpan 
+                            </button>
+                        </div>
+                        <hr>
+                        <h4>Gambar sampul tersimpan</h4>
+                        <div class="row d-flex justify-content-center">
+                            <div class="col-6">
+                                <img src="{{  $content?->image_hero ?? "#" }}" alt="" class="img-fluid">
                             </div>
                         </div>
                     </form>
-                    <div class="d-flex justify-content-end">
-                        <button type="button" class="btn btn-outline-primary rounded-pill" data-toggle="tooltip" data-placement="top" title="Simpan input" id="addRecord">
-                            <i class="ri-add-circle-line"></i> Simpan 
-                        </button>
-                        {{-- <button type="button" class="btn btn-outline-secondary rounded-pill" data-toggle="tooltip" data-placement="top" title="Reset Form" id="reset">
-                            <i class="ri-arrow-go-back-line"></i> Reset 
-                        </button> --}}
-                    </div>
                 </div>
                 <div class="card-body">
                     
