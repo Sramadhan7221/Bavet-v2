@@ -73,7 +73,7 @@
                         </div>
                         <div class="d-flex justify-content-end">
                             <button type="button" class="btn btn-outline-primary rounded-pill" data-toggle="tooltip" data-placement="top" title="Simpan input" id="addRecord">
-                                <i class="ri-add-circle-line"></i> Simpan 
+                                <i class="ri-save-3-line"></i> Simpan 
                             </button>
                         </div>
                         <hr>

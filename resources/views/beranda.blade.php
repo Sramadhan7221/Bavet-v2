@@ -4,6 +4,8 @@
 <head>
   @include('partials.head')
   
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
   <style>
     /* Banner container with background image and purple overlay */
     .banner-bg {
@@ -98,6 +100,215 @@
       opacity: 1;
     }
 
+    .badge-tahun {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #007bff;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+
+    .artikel-recent-posts {
+      padding: 60px 0;
+    }
+
+    .artikel-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .artikel-section-title {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .artikel-section-title h2 {
+      font-size: 32px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .artikel-section-title p {
+      color: #666;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    /* Article Card Styling */
+    .artikel-card {
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .artikel-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Banner Image Container - Landscape Format with Portrait Protection */
+    .artikel-banner-wrapper {
+      position: relative;
+      width: 100%;
+      height: 200px; /* Fixed height for consistency */
+      overflow: hidden;
+      background: #f0f0f0;
+    }
+
+    .artikel-banner {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Cover untuk landscape, akan crop jika portrait */
+      object-position: center;
+      transition: transform 0.3s ease;
+    }
+
+    .artikel-card:hover .artikel-banner {
+      transform: scale(1.05);
+    }
+
+    /* Date Badge */
+    .artikel-date {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(128, 0, 128, 0.9);
+      color: #fff;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* Content Area */
+    .artikel-content {
+      padding: 20px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .artikel-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 10px;
+      line-height: 1.4;
+      /* Limit to 2 lines */
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-height: 50px; /* Reserve space for 2 lines */
+    }
+
+    .artikel-description {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 15px;
+      line-height: 1.6;
+      /* CRITICAL: Limit to exactly 2 lines */
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      height: 44px; /* Fixed height: 14px * 1.6 * 2 lines ≈ 44px */
+    }
+
+    .artikel-meta {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: #999;
+      font-size: 13px;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .artikel-meta i {
+      font-size: 14px;
+    }
+
+    .artikel-readmore {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #800080;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      margin-top: auto;
+      transition: gap 0.3s ease;
+    }
+
+    .artikel-readmore:hover {
+      gap: 12px;
+      color: #600060;
+    }
+
+    .artikel-readmore i {
+      font-size: 16px;
+      transition: transform 0.3s ease;
+    }
+
+    .artikel-readmore:hover i {
+      transform: translateX(3px);
+    }
+
+    /* Swiper Customization */
+    .artikel-posts-slider {
+      padding: 0 0 50px 0;
+    }
+
+    .artikel-posts-slider .swiper-button-next,
+    .artikel-posts-slider .swiper-button-prev {
+      color: #800080;
+      background: #fff;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .artikel-posts-slider .swiper-button-next:after,
+    .artikel-posts-slider .swiper-button-prev:after {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .artikel-posts-slider .swiper-button-next:hover,
+    .artikel-posts-slider .swiper-button-prev:hover {
+      background: #800080;
+      color: #fff;
+    }
+
+    .artikel-posts-slider .swiper-pagination-bullet {
+      background: #ccc;
+      opacity: 1;
+      width: 10px;
+      height: 10px;
+    }
+
+    .artikel-posts-slider .swiper-pagination-bullet-active {
+      background: #800080;
+      width: 30px;
+      border-radius: 5px;
+    }
+
     /* Responsive adjustments */
     @media (max-width: 768px) {
       .banner-bg {
@@ -150,6 +361,53 @@
       .swiper-button-next:after,
       .swiper-button-prev:after {
         font-size: 14px;
+      }
+    }
+
+        /* Responsive */
+    @media (max-width: 1024px) {
+      .artikel-banner-wrapper {
+        height: 180px;
+      }
+
+      .artikel-title {
+        font-size: 16px;
+        min-height: 45px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .artikel-recent-posts {
+        padding: 40px 0;
+      }
+
+      .artikel-section-title h2 {
+        font-size: 26px;
+      }
+
+      .artikel-banner-wrapper {
+        height: 160px;
+      }
+
+      .artikel-title {
+        font-size: 15px;
+        min-height: 42px;
+      }
+
+      .artikel-description {
+        font-size: 13px;
+        height: 41px;
+      }
+
+      .artikel-posts-slider .swiper-button-next,
+      .artikel-posts-slider .swiper-button-prev {
+        width: 35px;
+        height: 35px;
+      }
+
+      .artikel-posts-slider .swiper-button-next:after,
+      .artikel-posts-slider .swiper-button-prev:after {
+        font-size: 16px;
       }
     }
   </style>
@@ -215,38 +473,7 @@
       </div>
 
     </section><!-- /Services Section -->
-
-    <!-- About Section -->
-    <section id="about" class="about section">
-
-      <div class="container" data-aos="fade-up">
-        <div class="row gx-0">
-
-          <div class="col-lg-6 d-flex flex-column justify-content-center" data-aos="fade-up" data-aos-delay="200">
-            <div class="content">
-              <h3>Tentang Kami</h3>
-              <h2>{{ $about->title }}</h2>
-              <p>
-                {{ $about->desc }}
-              </p>
-              <div class="text-center text-lg-start">
-                <a href="{{ url('/artikel') }}?page=about" class="btn-read-more d-inline-flex align-items-center justify-content-center align-self-center">
-                  <span>Baca Selengkapnya</span>
-                  <i class="bi bi-arrow-right"></i>
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-6 d-flex align-items-center" data-aos="zoom-out" data-aos-delay="200">
-            <img src="{{ $about?->image_hero }}" class="img-fluid" alt="">
-          </div>
-
-        </div>
-      </div>
-
-    </section><!-- /About Section -->
-
+  
     <!-- Features Section -->
     <section id="features" class="features section">
 
@@ -297,42 +524,41 @@
 
         <div class="row gy-4">
 
-          <div class="col-lg-3 col-md-6">
-            <div class="stats-item d-flex align-items-center w-100 h-100">
-              <i class="bi bi-emoji-smile color-blue flex-shrink-0"></i>
+          <div class="col-lg-4 col-md-6">
+            <div class="stats-item d-flex align-items-center w-100 h-100 position-relative">
+              
+              <p class="badge bg-primary position-absolute top-0 end-0 m-2 p-1">2024</p>
+
+              <i class="bi bi-graph-up color-blue flex-shrink-0"></i>
               <div>
                 <span data-purecounter-start="0" data-purecounter-end="232" data-purecounter-duration="1" class="purecounter"></span>
-                <p>Happy Clients</p>
+                <p>Pengujian Penyakit Hewan</p>
               </div>
             </div>
-          </div><!-- End Stats Item -->
+          </div>
 
-          <div class="col-lg-3 col-md-6">
-            <div class="stats-item d-flex align-items-center w-100 h-100">
-              <i class="bi bi-journal-richtext color-orange flex-shrink-0" style="color: #ee6c20;"></i>
+          <div class="col-lg-4 col-md-6">
+            <div class="stats-item d-flex align-items-center w-100 h-100 position-relative">
+              
+              <p class="badge bg-primary position-absolute top-0 end-0 m-2 p-1">2024</p>
+
+              <i class="bi bi-graph-up color-orange flex-shrink-0" style="color: #ee6c20;"></i>
               <div>
                 <span data-purecounter-start="0" data-purecounter-end="521" data-purecounter-duration="1" class="purecounter"></span>
-                <p>Projects</p>
+                <p>Pengujian Produk Hewan</p>
               </div>
             </div>
-          </div><!-- End Stats Item -->
+          </div>
 
-          <div class="col-lg-3 col-md-6">
-            <div class="stats-item d-flex align-items-center w-100 h-100">
-              <i class="bi bi-headset color-green flex-shrink-0" style="color: #15be56;"></i>
+          <div class="col-lg-4 col-md-6">
+            <div class="stats-item d-flex align-items-center w-100 h-100 position-relative">
+              
+              <p class="badge bg-primary position-absolute top-0 end-0 m-2 p-1">2024</p>
+
+              <i class="bi bi-graph-up color-green flex-shrink-0" style="color: #15be56;"></i>
               <div>
                 <span data-purecounter-start="0" data-purecounter-end="1463" data-purecounter-duration="1" class="purecounter"></span>
-                <p>Hours Of Support</p>
-              </div>
-            </div>
-          </div><!-- End Stats Item -->
-
-          <div class="col-lg-3 col-md-6">
-            <div class="stats-item d-flex align-items-center w-100 h-100">
-              <i class="bi bi-people color-pink flex-shrink-0" style="color: #bb0852;"></i>
-              <div>
-                <span data-purecounter-start="0" data-purecounter-end="15" data-purecounter-duration="1" class="purecounter"></span>
-                <p>Hard Workers</p>
+                <p>Pengujian Kesmavet</p>
               </div>
             </div>
           </div><!-- End Stats Item -->
@@ -342,140 +568,13 @@
       </div>
 
     </section><!-- /Stats Section -->
+
     
-    <!-- Team Section -->
-    <section id="team" class="team section">
-
-      <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-        <h2>Struktural</h2>
-        <p>Profil Struktural</p>
-      </div><!-- End Section Title -->
-
-      <div class="container">
-
-        <div class="row gy-4">
-
-          @foreach ($struktural as $idx => $member)
-            <div class="col-lg-3 col-md-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="{{ ($idx+1)*100 }}">
-              <div class="team-member">
-                <div class="member-img">
-                  <img src="{{ $member->img_profile }}" class="img-fluid" alt="">
-                  <div class="social">
-                    @if($member->tiktok)
-                      <a href="{{ $member->tiktok }}"><i class="bi bi-tiktok"></i></a>
-                    @endif
-                    @if($member->facebook)
-                      <a href="{{ $member->facebook }}"><i class="bi bi-facebook"></i></a>
-                    @endif
-                    @if($member->instagram)
-                      <a href="{{ $member->instagram }}"><i class="bi bi-instagram"></i></a>
-                    @endif
-                  </div>
-                </div>
-                <div class="member-info">
-                  <h4>{{ $member->nama }}</h4>
-                  <span>{{ $member->jabatan }}</span>
-                  {!! $member->bio !!}
-                </div>
-              </div>
-            </div><!-- End Team Member -->
-          @endforeach
-
-        </div>
-
-      </div>
-
-    </section><!-- /Team Section -->
-
-    <!-- Faq Section -->
-    <section id="faq" class="faq section">
-
-      <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-        <h2>F.A.Q</h2>
-        <p>Frequently Asked Questions</p>
-      </div><!-- End Section Title -->
-
-      <div class="container">
-
-        <div class="row">
-
-          <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
-
-            <div class="faq-container">
-
-              <div class="faq-item faq-active">
-                <h3>Non consectetur a erat nam at lectus urna duis?</h3>
-                <div class="faq-content">
-                  <p>Feugiat pretium nibh ipsum consequat. Tempus iaculis urna id volutpat lacus laoreet non curabitur gravida. Venenatis lectus magna fringilla urna porttitor rhoncus dolor purus non.</p>
-                </div>
-                <i class="faq-toggle bi bi-chevron-right"></i>
-              </div><!-- End Faq item-->
-
-              <div class="faq-item">
-                <h3>Feugiat scelerisque varius morbi enim nunc faucibus a pellentesque?</h3>
-                <div class="faq-content">
-                  <p>Dolor sit amet consectetur adipiscing elit pellentesque habitant morbi. Id interdum velit laoreet id donec ultrices. Fringilla phasellus faucibus scelerisque eleifend donec pretium. Est pellentesque elit ullamcorper dignissim. Mauris ultrices eros in cursus turpis massa tincidunt dui.</p>
-                </div>
-                <i class="faq-toggle bi bi-chevron-right"></i>
-              </div><!-- End Faq item-->
-
-              <div class="faq-item">
-                <h3>Dolor sit amet consectetur adipiscing elit pellentesque?</h3>
-                <div class="faq-content">
-                  <p>Eleifend mi in nulla posuere sollicitudin aliquam ultrices sagittis orci. Faucibus pulvinar elementum integer enim. Sem nulla pharetra diam sit amet nisl suscipit. Rutrum tellus pellentesque eu tincidunt. Lectus urna duis convallis convallis tellus. Urna molestie at elementum eu facilisis sed odio morbi quis</p>
-                </div>
-                <i class="faq-toggle bi bi-chevron-right"></i>
-              </div><!-- End Faq item-->
-
-            </div>
-
-          </div><!-- End Faq Column-->
-
-          <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
-
-            <div class="faq-container">
-
-              <div class="faq-item">
-                <h3>Ac odio tempor orci dapibus. Aliquam eleifend mi in nulla?</h3>
-                <div class="faq-content">
-                  <p>Dolor sit amet consectetur adipiscing elit pellentesque habitant morbi. Id interdum velit laoreet id donec ultrices. Fringilla phasellus faucibus scelerisque eleifend donec pretium. Est pellentesque elit ullamcorper dignissim. Mauris ultrices eros in cursus turpis massa tincidunt dui.</p>
-                </div>
-                <i class="faq-toggle bi bi-chevron-right"></i>
-              </div><!-- End Faq item-->
-
-              <div class="faq-item">
-                <h3>Tempus quam pellentesque nec nam aliquam sem et tortor consequat?</h3>
-                <div class="faq-content">
-                  <p>Molestie a iaculis at erat pellentesque adipiscing commodo. Dignissim suspendisse in est ante in. Nunc vel risus commodo viverra maecenas accumsan. Sit amet nisl suscipit adipiscing bibendum est. Purus gravida quis blandit turpis cursus in</p>
-                </div>
-                <i class="faq-toggle bi bi-chevron-right"></i>
-              </div><!-- End Faq item-->
-
-              <div class="faq-item">
-                <h3>Perspiciatis quod quo quos nulla quo illum ullam?</h3>
-                <div class="faq-content">
-                  <p>Enim ea facilis quaerat voluptas quidem et dolorem. Quis et consequatur non sed in suscipit sequi. Distinctio ipsam dolore et.</p>
-                </div>
-                <i class="faq-toggle bi bi-chevron-right"></i>
-              </div><!-- End Faq item-->
-
-            </div>
-
-          </div><!-- End Faq Column-->
-
-        </div>
-
-      </div>
-
-    </section><!-- /Faq Section -->
-
     <!-- Portfolio Section -->
     <section id="portfolio" class="portfolio section">
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
-        <h2>Publikasi</h2>
+        <h2 class="mb-2">Publikasi</h2>
         <p></p>
       </div><!-- End Section Title -->
 
@@ -544,6 +643,59 @@
       </div>
 
     </section><!-- /Portfolio Section -->
+
+    <!-- Recent Posts Section -->
+    <section id="recent-posts" class="artikel-recent-posts section">
+      <div class="artikel-container artikel-section-title">
+        <h2>Artikel</h2>
+        <p>Baca artikel terbaru</p>
+      </div>
+
+      <div class="artikel-container">
+        <div class="swiper artikel-posts-slider" id="artikelPostsSlider">
+          <div class="swiper-wrapper">
+            @if($blogs && $blogs->count() > 0)
+              @foreach ($blogs as $blog)
+                <div class="swiper-slide">
+                  <div class="artikel-card">
+                    <div class="artikel-banner-wrapper">
+                      <img src="{{ $blog->banner }}" 
+                          class="artikel-banner" 
+                          alt="{{ $blog->title }}">
+                      <span class="artikel-date">{{ $blog->created_at->format('d-m-Y') }}</span>
+                    </div>
+                    <div class="artikel-content">
+                      <h3 class="artikel-title">{{ $blog->title }}</h3>
+                      <p class="artikel-description">{{ $blog->description ?? 'Deskripsi singkat artikel' }}</p>
+                      <div class="artikel-meta">
+                        <i class="bi bi-person"></i>
+                        <span>{{ $blog->penulis->name ?? 'Admin' }}</span>
+                      </div>
+                      <a href="{{ url('/artikel') }}?page={{ $blog->slug }}" class="artikel-readmore">
+                        <span>Selengkapnya</span>
+                        <i class="bi bi-arrow-right"></i>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              @endforeach
+            @else
+              <div class="swiper-slide">
+                <div class="artikel-card">
+                  <div class="artikel-content">
+                    <p class="text-center">Belum ada artikel tersedia</p>
+                  </div>
+                </div>
+              </div>
+            @endif
+          </div>
+
+          <div class="swiper-pagination"></div>
+          <div class="swiper-button-prev"></div>
+          <div class="swiper-button-next"></div>
+        </div>
+      </div>
+    </section>
 
     <!-- Testimonials Section -->
     <section id="testimonials" class="testimonials section">
@@ -734,95 +886,88 @@
 
     </section><!-- /Clients Section -->
 
-    <!-- Recent Posts Section -->
-    <section id="recent-posts" class="recent-posts section">
+    <!-- Faq Section -->
+    <section id="faq" class="faq section">
 
       <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-        <h2>Artikel Terbaru di Blog</h2>
-        <p>Baca artikel terbaru di blog kami.</p>
+      <div class="container section-title" data-aos ="fade-up">
+        <h2>F.A.Q</h2>
+        <p>Frequently Asked Questions</p>
       </div><!-- End Section Title -->
 
       <div class="container">
 
-        <div class="swiper recent-posts-slider" id="recentPostsSlider">
-          <script type="application/json" class="swiper-config">
-            {
-              "loop": true,
-              "speed": 600,
-              "autoplay": {
-                "delay": 5000,
-                "disableOnInteraction": false
-              },
-              "slidesPerView": 1,
-              "spaceBetween": 30,
-              "pagination": {
-                "el": ".swiper-pagination",
-                "type": "bullets",
-                "clickable": true
-              },
-              "navigation": {
-                "nextEl": ".swiper-button-next",
-                "prevEl": ".swiper-button-prev"
-              },
-              "breakpoints": {
-                "640": {
-                  "slidesPerView": 2,
-                  "spaceBetween": 20
-                },
-                "1024": {
-                  "slidesPerView": 3,
-                  "spaceBetween": 30
-                }
-              }
-            }
-          </script>
+        <div class="row">
 
-          <div class="swiper-wrapper">
+          <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
 
-            @foreach ($blogs as $blog)
-              <div class="swiper-slide">
-                <div class="post-item position-relative h-100" data-aos="fade-up" data-aos-delay="100">
+            <div class="faq-container">
 
-                  <div class="post-img position-relative overflow-hidden">
-                    <img src="{{ $blog->banner }}" class="img-fluid" alt="">
-                    <span class="post-date">{{ $blog->created_at->format('d-m-Y') }}</span>
-                  </div>
-
-                  <div class="post-content d-flex flex-column">
-
-                    <h3 class="post-title">{{ $blog->title }}</h3>
-
-                    <div class="meta d-flex align-items-center">
-                      <div class="d-flex align-items-center">
-                        <i class="bi bi-person"></i> <span class="ps-2">{{ $blog->penulis->name }}</span>
-                      </div>
-                    </div>
-
-                    <hr>
-
-                    <a href="{{ url('/artikel') }}?page={{ $blog->slug }}" class="readmore stretched-link"><span>Selengkapnya</span><i class="bi bi-arrow-right"></i></a>
-
-                  </div>
-
+              <div class="faq-item faq-active">
+                <h3>Non consectetur a erat nam at lectus urna duis?</h3>
+                <div class="faq-content">
+                  <p>Feugiat pretium nibh ipsum consequat. Tempus iaculis urna id volutpat lacus laoreet non curabitur gravida. Venenatis lectus magna fringilla urna porttitor rhoncus dolor purus non.</p>
                 </div>
-              </div><!-- End post item -->
-            @endforeach
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
 
-          </div>
+              <div class="faq-item">
+                <h3>Feugiat scelerisque varius morbi enim nunc faucibus a pellentesque?</h3>
+                <div class="faq-content">
+                  <p>Dolor sit amet consectetur adipiscing elit pellentesque habitant morbi. Id interdum velit laoreet id donec ultrices. Fringilla phasellus faucibus scelerisque eleifend donec pretium. Est pellentesque elit ullamcorper dignissim. Mauris ultrices eros in cursus turpis massa tincidunt dui.</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
 
-          <!-- Pagination -->
-          <div class="swiper-pagination"></div>
+              <div class="faq-item">
+                <h3>Dolor sit amet consectetur adipiscing elit pellentesque?</h3>
+                <div class="faq-content">
+                  <p>Eleifend mi in nulla posuere sollicitudin aliquam ultrices sagittis orci. Faucibus pulvinar elementum integer enim. Sem nulla pharetra diam sit amet nisl suscipit. Rutrum tellus pellentesque eu tincidunt. Lectus urna duis convallis convallis tellus. Urna molestie at elementum eu facilisis sed odio morbi quis</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
 
-          <!-- Navigation buttons -->
-          <div class="swiper-button-prev"></div>
-          <div class="swiper-button-next"></div>
+            </div>
 
-        </div><!-- End Swiper -->
+          </div><!-- End Faq Column-->
+
+          <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
+
+            <div class="faq-container">
+
+              <div class="faq-item">
+                <h3>Ac odio tempor orci dapibus. Aliquam eleifend mi in nulla?</h3>
+                <div class="faq-content">
+                  <p>Dolor sit amet consectetur adipiscing elit pellentesque habitant morbi. Id interdum velit laoreet id donec ultrices. Fringilla phasellus faucibus scelerisque eleifend donec pretium. Est pellentesque elit ullamcorper dignissim. Mauris ultrices eros in cursus turpis massa tincidunt dui.</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
+
+              <div class="faq-item">
+                <h3>Tempus quam pellentesque nec nam aliquam sem et tortor consequat?</h3>
+                <div class="faq-content">
+                  <p>Molestie a iaculis at erat pellentesque adipiscing commodo. Dignissim suspendisse in est ante in. Nunc vel risus commodo viverra maecenas accumsan. Sit amet nisl suscipit adipiscing bibendum est. Purus gravida quis blandit turpis cursus in</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
+
+              <div class="faq-item">
+                <h3>Perspiciatis quod quo quos nulla quo illum ullam?</h3>
+                <div class="faq-content">
+                  <p>Enim ea facilis quaerat voluptas quidem et dolorem. Quis et consequatur non sed in suscipit sequi. Distinctio ipsam dolore et.</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
+
+            </div>
+
+          </div><!-- End Faq Column-->
+
+        </div>
 
       </div>
 
-    </section><!-- /Recent Posts Section -->
+    </section><!-- /Faq Section -->
 
     <!-- Contact Section -->
     <section id="contact" class="contact section">
@@ -928,6 +1073,47 @@
         1024: {
           slidesPerView: 1,
           spaceBetween: 40,
+        }
+      }
+    });
+  </script>
+  <script>
+    // Initialize Swiper untuk Artikel
+    const artikelSwiper = new Swiper('#artikelPostsSlider', {
+      loop: true,
+      speed: 600,
+      // autoplay: {
+      //   delay: 5000,
+      //   disableOnInteraction: false,
+      // },
+      slidesPerView: 1,
+      spaceBetween: 30,
+      pagination: {
+        el: '.artikel-posts-slider .swiper-pagination',
+        type: 'bullets',
+        clickable: true,
+      },
+      navigation: {
+        nextEl: '.artikel-posts-slider .swiper-button-next',
+        prevEl: '.artikel-posts-slider .swiper-button-prev',
+      },
+      breakpoints: {
+        640: {
+          slidesPerView: 2,
+          spaceBetween: 15,
+          slidesPerGroup: 2,
+        },
+        768: {
+          slidesPerView: 3,
+          slidesPerGroup: 3,  // Slide 3 items at once
+        },
+        1024: {
+          slidesPerView: 4,
+          slidesPerGroup: 4,  // Slide 4 items at once
+        },
+        1280: {
+          slidesPerView: 4,
+          slidesPerGroup: 4,  // XL screens
         }
       }
     });
