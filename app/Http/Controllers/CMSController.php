@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AboutContent;
+use App\Models\CarouselBanner;
 use App\Models\HomeContent;
 use App\Models\Karyawan;
 use App\Models\Menus;
@@ -13,6 +14,7 @@ use App\Models\Tags;
 use App\Services\FileService;
 use App\Validators\AboutValidator;
 use App\Validators\BeritaValidator;
+use App\Validators\CarouselBannerValidator;
 use App\Validators\GalleryValidator;
 use App\Validators\HomeValidator;
 use App\Validators\KaryawanValidator;
@@ -794,15 +796,189 @@ class CMSController extends Controller
     {
         try {
             $request->validate([
-                'id' => ['required', 'string']
+                'id' => ['required']
             ]);
 
-            $team = Service::where('id', $request->id)->first();
-            if (!$team) {
+            $layanan = Service::where('id', $request->id)->first();
+            if (!$layanan) {
                 return response()->json(['msg_type' => "warning", 'message' => "Data tidak ditemukan"], 404);
             }
 
-            $team->delete();
+            if (preg_match('/src="([^"]+)"/', $layanan->icon, $match)) {
+                $src = $match[1];
+                if(!$this->fileService->deleteFile($src))
+                    Log::alert('[CMS] Gagal menghapus asset icon dengan url: ' . $src);
+            }
+
+            if(!empty($layanan->banner)) {
+                if(!$this->fileService->deleteFile($layanan->banner))
+                    Log::alert('[CMS] Gagal menghapus asset banner dengan url: ' . $layanan->banner);
+            }
+
+            $layanan->delete();
+            return response()->json(['msg_type' => "success", 'message' => "Data berhasil dihapus"]);
+        } catch (ValidationException $e) {
+            $errors = $e->validator->errors();
+            return response()->json(['msg_type' => "warning", 'message' => $errors], 400);
+        } catch (\Throwable $th) {
+            Log::error('Kesalahan Sistem: ' . $th->getMessage());
+            return response()->json(['msg' => "Terjadi Kesalahan", "msg_type" => "error"], 500);
+        }
+    }
+
+    public function carouselBanner(Request $request)
+    {
+        if($request->isMethod('POST')) {
+            try {
+
+                $request->validate([
+                    'banner' => 'required|mimes:jpg,jpeg,png|max:5096'
+                ]);
+
+                $image = $request->file('banner');
+                $carouselItem = DB::transaction(function () use ($image) {
+                    try {
+
+                        $maxUrutan = CarouselBanner::lockForUpdate()->max('urutan') ?? 0;
+
+                        $imgPath = $this->fileService->saveFile($image, Str::uuid(),'carousel-assets');
+                        $urlPath = url($imgPath);
+
+                        return CarouselBanner::create([
+                            'img_path' => $urlPath,
+                            'urutan' => $maxUrutan + 1
+                        ]);
+                    } catch (\Throwable $th) {
+                        Log::error("[CMSController] Failed to save carouselItem: {$th->getMessage()}");
+                        throw $th;
+                    }
+                });
+               
+
+                return response()->json(['message' => "Image Uploaded", 'msg_type' => 'success', 'url' => $carouselItem->img_path, 'id' => $carouselItem->id]);
+
+            } catch (ValidationException $e) {
+                $errors = $e->validator->errors();
+                return response()->json(['msg_type' => "warning", 'message' => $errors], 400);
+            } catch (\Throwable $th) {
+                Log::error('[CMS] System Error: ' . $th->getMessage() . ' at line ' . $th->getLine());
+                return response()->json(['message' => 'Terjadi Kesalahan, silahkan coba beberapa saat lagi', 'msg_type' => 'error'], 500);
+            }  
+        }
+
+        if($request->ajax())
+        {
+            $model = CarouselBanner::query()
+                ->select(['id','img_path','urutan','status'])
+                ->orderBy('urutan', 'asc');
+
+            return DataTables::of($model)
+            ->make(true);
+        }
+
+        return view('admin.carousels', [
+            'title' => 'Carousel Konten Management'
+        ]);
+    }
+
+    public function updateCarousel(Request $request)
+    {
+        try {
+            $request->validate([
+                'banners' => 'nullable|array|min:1',
+                'banners.*.id' => 'required|integer|exists:carousel_banners,id',
+                'banners.*.urutan' => 'required|integer|min:1',
+                'id' => 'nullable|integer',
+                'status' => 'nullable|in:active,inactive'
+            ]);
+
+            if($request->filled('banners')) {
+                $banners = $request->banners;
+                
+                // Validasi urutan unik
+                $urutanValues = array_column($banners, 'urutan');
+                if(count($urutanValues) !== count(array_unique($urutanValues))) {
+                    return response()->json([
+                        'message' => "Urutan tidak boleh ada yang sama", 
+                        'msg_type' => 'error'
+                    ], 422);
+                }
+                
+                DB::transaction(function () use ($banners) {
+                    $ids = array_column($banners, 'id');
+                    
+                    // 🔑 PENTING: Sort untuk consistent lock ordering
+                    sort($ids, SORT_NUMERIC);
+                    
+                    // Lock dengan urutan konsisten
+                    $bannersById = CarouselBanner::whereIn('id', $ids)
+                        ->orderBy('id', 'asc') // Enforce consistent order
+                        ->lockForUpdate()
+                        ->get()
+                        ->keyBy('id');
+                    
+                    // Validasi lengkap
+                    if($bannersById->count() !== count($ids)) {
+                        $found = $bannersById->pluck('id')->toArray();
+                        $missing = array_diff($ids, $found);
+                        throw new \Exception("Banner tidak ditemukan: " . implode(', ', $missing));
+                    }
+                    
+                    // Update urutan
+                    foreach($banners as $banner) {
+                        $bannersById[$banner['id']]->urutan = $banner['urutan'];
+                        $bannersById[$banner['id']]->save();
+                    }
+                });
+                
+                return response()->json([
+                    'message' => "Urutan banner berhasil diupdate",
+                    'msg_type' => 'success',
+                    'updated_count' => count($banners)
+                ]);
+            }
+            
+            elseif ($request->filled(['id','status'])) {
+                $bannerItem = CarouselBanner::findOrFail($request->id);
+                $bannerItem->status = $request->status;
+                $bannerItem->save();
+                
+                return response()->json([
+                    'message' => "Status banner berhasil diupdate",
+                    'msg_type' => 'success'
+                ]);
+            }
+            
+            return response()->json([
+                'message' => "Parameter request tidak lengkap", 
+                'msg_type' => 'error'
+            ], 400);
+            
+        } catch (\Throwable $th) {
+            Log::error('[CMS] updateCarousel Error: ' . $th->getMessage());
+            return response()->json([
+                'message' => 'Terjadi kesalahan, silahkan coba lagi',
+                'msg_type' => 'error'
+            ], 500);
+        }
+    }
+
+    public function deleteCarousel(Request $request)
+    {
+        try {
+            $request->validate([
+                'id' => ['required']
+            ]);
+
+            $item = CarouselBanner::where('id', $request->id)->first();
+            if (!$item) {
+                return response()->json(['msg_type' => "warning", 'message' => "Data tidak ditemukan"], 404);
+            }
+
+            if(!$this->fileService->deleteFile($item->img_path))
+                Log::alert('[CMS] Gagal menghapus asset carousel banner dengan url: ' . $item->img_path);
+
+            $item->delete();
             return response()->json(['msg_type' => "success", 'message' => "Data berhasil dihapus"]);
         } catch (ValidationException $e) {
             $errors = $e->validator->errors();

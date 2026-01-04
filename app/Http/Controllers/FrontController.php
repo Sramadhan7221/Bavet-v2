@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\AboutContent;
+use App\Models\CarouselBanner;
 use App\Models\HomeContent;
 use App\Models\Karyawan;
 use App\Models\Pages;
+use App\Models\Service;
 use App\Services\BlogService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -34,8 +36,12 @@ class FrontController extends Controller
             ->orderBy('urutan')
             ->limit($hc?->maks_struktural ?? 1)
             ->get();
+        $services = Service::all();
+        $carousels = CarouselBanner::where('status', 'active')
+            ->orderBy('urutan')
+            ->get();
 
-        return view('home', compact(['hc','about','galleries','struktural','blogs']));
+        return view('beranda', compact(['hc','about','galleries','struktural','blogs', 'services', 'carousels']));
     }
 
     public function blogSearch(Request $request)

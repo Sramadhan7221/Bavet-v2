@@ -47,5 +47,9 @@ Route::middleware('auth')->group(function () {
     
     Route::any('cms-layanan', [CMSController::class, 'services'])->name('admin.services');
     Route::get('cms-layanan-detail/{id}', [CMSController::class, 'serviceById']);
-    Route::post('cms-layanan-delete', [CMSController::class, 'deleteService'])->name('admin.services-delete');   
+    Route::post('cms-layanan-delete', [CMSController::class, 'deleteService'])->name('admin.services-delete');  
+    
+    Route::any('cms-carousel', [CMSController::class, 'carouselBanner'])->name('admin.carousels');
+    Route::post('cms-carousel-update', [CMSController::class, 'updateCarousel'])->name('admin.carousels-update');
+    Route::post('cms-carousel-delete', [CMSController::class, 'deleteCarousel'])->name('admin.carousels-delete');
 });

@@ -8,11 +8,41 @@
 
       <nav id="navmenu" class="navmenu">
         <ul>
-          <li><a href="#hero" class="active">Beranda<br></a></li>
-          <li><a href="#about">Tentang</a></li>
-          <li><a href="#portfolio">Aktivitas</a></li>
-          <li><a href="#team">Team</a></li>
-          <li><a href="#contact">Kontak</a></li>
+          <li><a href="{{ url('/') }}" class="active">Beranda<br></a></li>
+          <li class="dropdown"><a href="#about"><span>Profil</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+            <ul>
+              <li><a href="#">Sejarah Singkat</a></li>
+              <li><a href="#">Tugas dan Fungsi</a></li>
+              <li><a href="#">Struktur Organisasi</a></li>
+              <li><a href="#">Akreditasi dan Sertifikasi</a></li>
+            </ul>
+          </li>
+          <li class="dropdown"><a href="#"><span>Layanan</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+            <ul>
+              <li><a href="#">Tarif Pengujian Penyakit Hewan</a></li>
+              <li><a href="#">Tarif Pengujian Produk Hewan</a></li>
+            </ul>
+          </li>
+          <li class="dropdown"><a href="#contact"><span>Kontak</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+            <ul>
+              <li><a href="#">Kantor Administrasi</a></li>
+              <li class="dropdown"><a href="#"><span>Satuan Pelayanan Lab</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                <ul>
+                  <li><a href="#">Laboratorium Cikole</a></li>
+                  <li><a href="#">Laboratorium Losari</a></li>
+                </ul>
+              </li>
+              <li class="dropdown"><a href="#"><span>Satuan Pelayanan</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                <ul>
+                  <li><a href="#">Satpel Losari</a></li>
+                  <li><a href="#">Satpel Banjar</a></li>
+                  <li><a href="#">Satpel Gunung Sindur</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li><a href="#portfolio">Artikel</a></li>
+          <li><a href="#clients">Mitra Kami</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>

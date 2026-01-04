@@ -21,11 +21,19 @@
             <li class="side-nav-item">
                 <a href="{{ route('admin.home') }}" class="side-nav-link">
                     <i class="ri-compass-3-line"></i>
-                    <span> Beranda Content </span>
+                    <span>Konten Beranda</span>
                     {{-- <span class="badge bg-success float-end">9+</span> --}}
                 </a>
             </li>
             
+            <li class="side-nav-item">
+                <a href="{{ route('admin.carousels') }}" class="side-nav-link">
+                    <i class="ri-compass-3-line"></i>
+                    <span>Konten Carousel</span>
+                    {{-- <span class="badge bg-success float-end">9+</span> --}}
+                </a>
+            </li>
+
             <li class="side-nav-item">
                 <a href="{{ route('admin.about') }}" class="side-nav-link">
                     <i class="ri-compass-3-line"></i>

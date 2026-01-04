@@ -3,6 +3,156 @@
 
 <head>
   @include('partials.head')
+  
+  <style>
+    /* Banner container with background image and purple overlay */
+    .banner-bg {
+      position: relative;
+      background-image: url('{{ asset('assets/img/rs.png') }}');
+      background-size: cover;
+      background-position: top;
+      background-attachment: fixed;
+      padding: 80px 0;
+      min-height: 400px;
+    }
+
+    /* Purple overlay with transparency to show background image */
+    .banner-overlay {
+      position: absolute;
+      inset: 0;
+      background-color: rgba(128, 0, 128, 0.5); /* #800080 with 50% transparency */
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Slider wrapper */
+    .custom-slider {
+      width: 100%;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    /* Individual slider item - fixed height container */
+    .custom-slider .slider-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 300px; /* Fixed height for layout stability */
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    /* Image styling - landscape default with portrait protection */
+    .custom-slider .slider-img {
+      width: 500px; /* Default width for landscape images */
+      max-width: 100%; /* Responsive constraint */
+      height: auto;
+      max-height: 250px; /* Prevents portrait images from breaking layout */
+      object-fit: contain; /* Maintains aspect ratio without stretching */
+      display: block;
+      margin: 0 auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Swiper navigation buttons */
+    .swiper-button-next,
+    .swiper-button-prev {
+      color: #fff;
+      background: rgba(128, 0, 128, 0.7);
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+    }
+
+    .swiper-button-next:after,
+    .swiper-button-prev:after {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .swiper-button-next:hover,
+    .swiper-button-prev:hover {
+      background: rgba(128, 0, 128, 0.9);
+    }
+
+    /* Pagination dots */
+    .swiper-pagination-bullet {
+      background: #fff;
+      opacity: 0.5;
+      width: 12px;
+      height: 12px;
+    }
+
+    .swiper-pagination-bullet-active {
+      background: #800080;
+      opacity: 1;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .banner-bg {
+        padding: 60px 0;
+        min-height: 350px;
+      }
+
+      .custom-slider .slider-item {
+        height: 250px;
+      }
+
+      .custom-slider .slider-img {
+        width: 400px;
+        max-height: 200px;
+      }
+
+      .swiper-button-next,
+      .swiper-button-prev {
+        width: 35px;
+        height: 35px;
+      }
+
+      .swiper-button-next:after,
+      .swiper-button-prev:after {
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .banner-bg {
+        padding: 40px 0;
+        min-height: 300px;
+      }
+
+      .custom-slider .slider-item {
+        height: 200px;
+      }
+
+      .custom-slider .slider-img {
+        width: 300px;
+        max-height: 180px;
+      }
+
+      .swiper-button-next,
+      .swiper-button-prev {
+        width: 30px;
+        height: 30px;
+      }
+
+      .swiper-button-next:after,
+      .swiper-button-prev:after {
+        font-size: 14px;
+      }
+    }
+  </style>
 </head>
 
 <body class="index-page">
@@ -31,7 +181,24 @@
       </div>
 
     </section><!-- /Hero Section -->
-
+    
+    <!-- Purple Banner Slider Section -->
+    <section id="purple-banner" class="purple-banner section">
+      <div class="banner-bg">
+        <div class="banner-overlay"></div>
+        <div class="container">
+          <div class="custom-slider swiper" id="purpleBannerSlider">
+            
+            <x-carousel-banners :carousels="$carousels"/>
+            
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
     <!-- Services Section -->
     <section id="services" class="services section">
 
@@ -43,45 +210,7 @@
 
       <div class="container">
 
-        <div class="row gy-4">
-
-          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-            <div class="service-item item-cyan position-relative">
-              <i class="bi bi-activity icon"></i>
-              <h3>Pengujian Penyakit Hewan</h3>
-              <p>Provident nihil minus qui consequatur non omnis maiores. Eos accusantium minus dolores iure perferendis tempore et consequatur.</p>
-              <a href="#" class="read-more stretched-link"><span>Read More</span> <i class="bi bi-arrow-right"></i></a>
-            </div>
-          </div><!-- End Service Item -->
-
-          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-            <div class="service-item item-orange position-relative">
-              <i class="bi bi-broadcast icon"></i>
-              <h3>Pengujian Produk Hewan</h3>
-              <p>Ut autem aut autem non a. Sint sint sit facilis nam iusto sint. Libero corrupti neque eum hic non ut nesciunt dolorem.</p>
-              <a href="#" class="read-more stretched-link"><span>Read More</span> <i class="bi bi-arrow-right"></i></a>
-            </div>
-          </div><!-- End Service Item -->
-
-          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-            <div class="service-item item-teal position-relative">
-              <i class="bi bi-easel icon"></i>
-              <h3>Pengawasan Lalu Lintas Hewan</h3>
-              <p>Ut excepturi voluptatem nisi sed. Quidem fuga consequatur. Minus ea aut. Vel qui id voluptas adipisci eos earum corrupti.</p>
-              <a href="#" class="read-more stretched-link"><span>Read More</span> <i class="bi bi-arrow-right"></i></a>
-            </div>
-          </div><!-- End Service Item -->
-
-          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
-            <div class="service-item item-indigo position-relative">
-              <i class="bi bi-calendar4-week icon"></i>
-              <h3>Program Magang</h3>
-              <p>Cumque et suscipit saepe. Est maiores autem enim facilis ut aut ipsam corporis aut. Sed animi at autem alias eius labore.</p>
-              <a href="#" class="read-more stretched-link"><span>Read More</span> <i class="bi bi-arrow-right"></i></a>
-            </div>
-          </div><!-- End Service Item -->
-
-        </div>
+        <x-layanan-utama-list :services="$services"/>
 
       </div>
 
@@ -769,6 +898,40 @@
   <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   @include('partials.scripts')
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    // Initialize Swiper
+    const swiper = new Swiper('#purpleBannerSlider', {
+      loop: true,
+      speed: 600,
+      autoplay: {
+        delay: 4000,
+        disableOnInteraction: false,
+      },
+      slidesPerView: 1,
+      spaceBetween: 20,
+      centeredSlides: true,
+      pagination: {
+        el: '.swiper-pagination',
+        type: 'bullets',
+        clickable: true,
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      breakpoints: {
+        768: {
+          slidesPerView: 1,
+          spaceBetween: 30,
+        },
+        1024: {
+          slidesPerView: 1,
+          spaceBetween: 40,
+        }
+      }
+    });
+  </script>
 
 </body>
 
