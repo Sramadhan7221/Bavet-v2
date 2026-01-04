@@ -12,6 +12,7 @@ use App\Models\Pages;
 use App\Models\Service;
 use App\Models\Tags;
 use App\Services\FileService;
+use App\Services\HomeContentService;
 use App\Validators\AboutValidator;
 use App\Validators\BeritaValidator;
 use App\Validators\CarouselBannerValidator;
@@ -200,34 +201,78 @@ class CMSController extends Controller
     public function home(Request $request)
     {
         try {
-            if ($request->isMethod('POST')) {
-                $validated = HomeValidator::validate($request, $request->id);
-                if ($request->hasFile('image_hero')) {
-                    $image = $request->file('image_hero');
-                    $filename = sprintf('home-%s', Str::uuid());
-                    $path = $this->fileService->saveFile($image, $filename, 'home');
-
-                    $validated['image_hero'] = url($path);
-                }
-
-                if ($request->filled('id'))
-                    HomeContent::where('id', $request->id)->update($validated);
-                else
-                    HomeContent::create($validated);
-
-                return response()->json(['msg_type' => "success", 'message' => "success"]);
+            // === GET REQUEST: Show Form ===
+            if ($request->isMethod('GET')) {
+                return view('admin.home-content', [
+                    'title' => 'Home Content',
+                    'content' => HomeContent::getInstance()
+                ]);
             }
 
-            return view('admin.home-content', [
-                'title' => 'Home Content',
-                'content' => HomeContent::first()
+            // === POST REQUEST: Update Content ===
+            $request->validate([
+                'type' => 'required|in:hero,vm,pengujian'
+            ], [
+                'type.required' => 'Parameter type tidak boleh kosong',
+                'type.in' => 'Tipe request tidak valid'
             ]);
+
+            $homeContent = null;
+
+            // Wrap dalam transaction untuk atomicity
+            DB::transaction(function () use ($request, &$homeContent) {
+                $homeContentService = new HomeContentService($this->fileService);
+                switch ($request->type) {
+                    case 'hero':
+                        $validated = HomeValidator::validate($request);
+                        $homeContent = $homeContentService->updateHero(
+                            $validated,
+                            $request->file('image_hero')
+                        );
+                        break;
+
+                    case 'vm':
+                        $validated = HomeValidator::validateVM($request);
+                        $homeContent = $homeContentService->updateVisionMission(
+                            $validated,
+                            $request->file('vm_banner')
+                        );
+                        break;
+
+                    case 'pengujian':
+                        $validated = HomeValidator::validatePengujian($request);
+                        $homeContent = $homeContentService->updatePengujian($validated);
+                        break;
+                }
+            });
+
+            return response()->json([
+                'msg_type' => 'success',
+                'message' => 'Konten berhasil diupdate',
+                'data' => [
+                    'updated_at' => $homeContent?->updated_at->toDateTimeString()
+                ]
+            ]);
+
         } catch (ValidationException $e) {
-            $errors = $e->validator->errors();
-            return response()->json(['msg_type' => "warning", 'message' => $errors], 400);
+            return response()->json([
+                'msg_type' => 'warning',
+                'message' => $e->validator->errors()->first(),
+                'errors' => $e->validator->errors()
+            ], 400);
+
         } catch (\Throwable $th) {
-            Log::error('Kesalahan Sistem: ' . $th->getMessage());
-            return response()->json(['msg' => "Terjadi Kesalahan", "msg_type" => "error"], 500);
+            Log::error('[HomeController] System Error', [
+                'message' => $th->getMessage(),
+                'file' => $th->getFile(),
+                'line' => $th->getLine(),
+                'trace' => $th->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'msg_type' => 'error',
+                'message' => 'Terjadi kesalahan sistem, silakan coba lagi'
+            ], 500);
         }
     }
 

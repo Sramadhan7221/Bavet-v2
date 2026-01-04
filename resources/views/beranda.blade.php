@@ -486,12 +486,12 @@
       <div class="container">
 
         <div class="content">
-          <p>{{ $about?->visi }}</p>
+          <p>{{ $hc?->visi }}</p>
         </div>
         <div class="row gy-5">
 
           <div class="col-xl-5" data-aos="zoom-out" data-aos-delay="100">
-            <img src="{{ $about?->image_visimisi }}" class="img-fluid" alt="">
+            <img src="{{ $hc?->vm_banner }}" class="img-fluid" alt="">
           </div>
 
           <div class="col-xl-7 d-flex">
@@ -499,7 +499,7 @@
               <div class="container section-title">
                 <p class="m-0">Misi</p>
               </div>
-              @foreach (explode("|", $about?->misi) as $idx => $item)
+              @foreach (explode("|", $hc?->misi) as $idx => $item)
                 <div class="col-md-6" data-aos="fade-up" data-aos-delay="{{ $idx+1 * 100 }}">
                   <div class="feature-box d-flex align-items-center">
                     <i class="bi bi-check"></i>
@@ -527,11 +527,11 @@
           <div class="col-lg-4 col-md-6">
             <div class="stats-item d-flex align-items-center w-100 h-100 position-relative">
               
-              <p class="badge bg-primary position-absolute top-0 end-0 m-2 p-1">2024</p>
+              <p class="badge bg-primary position-absolute top-0 end-0 m-2 p-1">{{ $hc->p_year }}</p>
 
               <i class="bi bi-graph-up color-blue flex-shrink-0"></i>
               <div>
-                <span data-purecounter-start="0" data-purecounter-end="232" data-purecounter-duration="1" class="purecounter"></span>
+                <span data-purecounter-start="0" data-purecounter-end="{{ $hc->p_hewan }}" data-purecounter-duration="1" class="purecounter"></span>
                 <p>Pengujian Penyakit Hewan</p>
               </div>
             </div>
@@ -540,11 +540,11 @@
           <div class="col-lg-4 col-md-6">
             <div class="stats-item d-flex align-items-center w-100 h-100 position-relative">
               
-              <p class="badge bg-primary position-absolute top-0 end-0 m-2 p-1">2024</p>
+              <p class="badge bg-primary position-absolute top-0 end-0 m-2 p-1">{{ $hc->p_year }}</p>
 
               <i class="bi bi-graph-up color-orange flex-shrink-0" style="color: #ee6c20;"></i>
               <div>
-                <span data-purecounter-start="0" data-purecounter-end="521" data-purecounter-duration="1" class="purecounter"></span>
+                <span data-purecounter-start="0" data-purecounter-end="{{ $hc->p_produk }}" data-purecounter-duration="1" class="purecounter"></span>
                 <p>Pengujian Produk Hewan</p>
               </div>
             </div>
@@ -553,11 +553,11 @@
           <div class="col-lg-4 col-md-6">
             <div class="stats-item d-flex align-items-center w-100 h-100 position-relative">
               
-              <p class="badge bg-primary position-absolute top-0 end-0 m-2 p-1">2024</p>
+              <p class="badge bg-primary position-absolute top-0 end-0 m-2 p-1">{{ $hc->p_year }}</p>
 
               <i class="bi bi-graph-up color-green flex-shrink-0" style="color: #15be56;"></i>
               <div>
-                <span data-purecounter-start="0" data-purecounter-end="1463" data-purecounter-duration="1" class="purecounter"></span>
+                <span data-purecounter-start="0" data-purecounter-end="{{ $hc->p_kesmavet }}" data-purecounter-duration="1" class="purecounter"></span>
                 <p>Pengujian Kesmavet</p>
               </div>
             </div>
