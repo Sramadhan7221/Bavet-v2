@@ -527,11 +527,11 @@
           <div class="col-lg-4 col-md-6">
             <div class="stats-item d-flex align-items-center w-100 h-100 position-relative">
               
-              <p class="badge bg-primary position-absolute top-0 end-0 m-2 p-1">{{ $hc->p_year }}</p>
+              <p class="badge bg-primary position-absolute top-0 end-0 m-2 p-1">{{ $hc->p_year ?? date('y') }}</p>
 
               <i class="bi bi-graph-up color-blue flex-shrink-0"></i>
               <div>
-                <span data-purecounter-start="0" data-purecounter-end="{{ $hc->p_hewan }}" data-purecounter-duration="1" class="purecounter"></span>
+                <span data-purecounter-start="0" data-purecounter-end="{{ $hc->p_hewan ?? 0 }}" data-purecounter-duration="1" class="purecounter"></span>
                 <p>Pengujian Penyakit Hewan</p>
               </div>
             </div>
@@ -540,11 +540,11 @@
           <div class="col-lg-4 col-md-6">
             <div class="stats-item d-flex align-items-center w-100 h-100 position-relative">
               
-              <p class="badge bg-primary position-absolute top-0 end-0 m-2 p-1">{{ $hc->p_year }}</p>
+              <p class="badge bg-primary position-absolute top-0 end-0 m-2 p-1">{{ $hc->p_year ?? date('y') }}</p>
 
               <i class="bi bi-graph-up color-orange flex-shrink-0" style="color: #ee6c20;"></i>
               <div>
-                <span data-purecounter-start="0" data-purecounter-end="{{ $hc->p_produk }}" data-purecounter-duration="1" class="purecounter"></span>
+                <span data-purecounter-start="0" data-purecounter-end="{{ $hc->p_produk ?? 0}}" data-purecounter-duration="1" class="purecounter"></span>
                 <p>Pengujian Produk Hewan</p>
               </div>
             </div>
@@ -553,7 +553,7 @@
           <div class="col-lg-4 col-md-6">
             <div class="stats-item d-flex align-items-center w-100 h-100 position-relative">
               
-              <p class="badge bg-primary position-absolute top-0 end-0 m-2 p-1">{{ $hc->p_year }}</p>
+              <p class="badge bg-primary position-absolute top-0 end-0 m-2 p-1">{{ $hc->p_year ?? date('y') }}</p>
 
               <i class="bi bi-graph-up color-green flex-shrink-0" style="color: #15be56;"></i>
               <div>
