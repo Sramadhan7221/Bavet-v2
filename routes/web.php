@@ -52,4 +52,8 @@ Route::middleware('auth')->group(function () {
     Route::any('cms-carousel', [CMSController::class, 'carouselBanner'])->name('admin.carousels');
     Route::post('cms-carousel-update', [CMSController::class, 'updateCarousel'])->name('admin.carousels-update');
     Route::post('cms-carousel-delete', [CMSController::class, 'deleteCarousel'])->name('admin.carousels-delete');
+
+    Route::any('cms-testi', [CMSController::class, 'testimonial'])->name('admin.testi');
+    Route::get('cms-testi-detail/{id}', [CMSController::class, 'testiById']);
+    Route::post('cms-testi-delete', [CMSController::class, 'deleteTesti'])->name('admin.testi-delete');
 });

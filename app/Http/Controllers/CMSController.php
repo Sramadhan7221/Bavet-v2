@@ -11,6 +11,7 @@ use App\Models\PageAssets;
 use App\Models\Pages;
 use App\Models\Service;
 use App\Models\Tags;
+use App\Models\Testimonial;
 use App\Services\FileService;
 use App\Services\HomeContentService;
 use App\Validators\AboutValidator;
@@ -21,6 +22,7 @@ use App\Validators\HomeValidator;
 use App\Validators\KaryawanValidator;
 use App\Validators\MenuValidator;
 use App\Validators\ServiceValidator;
+use App\Validators\TestiValidator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -1024,6 +1026,87 @@ class CMSController extends Controller
                 Log::alert('[CMS] Gagal menghapus asset carousel banner dengan url: ' . $item->img_path);
 
             $item->delete();
+            return response()->json(['msg_type' => "success", 'message' => "Data berhasil dihapus"]);
+        } catch (ValidationException $e) {
+            $errors = $e->validator->errors();
+            return response()->json(['msg_type' => "warning", 'message' => $errors], 400);
+        } catch (\Throwable $th) {
+            Log::error('Kesalahan Sistem: ' . $th->getMessage());
+            return response()->json(['msg' => "Terjadi Kesalahan", "msg_type" => "error"], 500);
+        }
+    }
+
+    public function testimonial(Request $request)
+    {
+        if($request->isMethod('POST')) {
+            try {
+                $validated = TestiValidator::validate($request);
+
+                if($request->has('img_profile')) {
+                    $image = $request->file('profil');
+                    $filename = sprintf('testi-%s', Str::uuid());
+                    $path = $this->fileService->saveFile($image, $filename, 'testimoni');
+                    $validated['profil'] = url($path);
+                }
+
+                if(!empty($request->id))
+                {
+                    Testimonial::where('id', $request->id)->update($validated);
+                    return response()->json(['msg_type' => "success", 'message' => "Update berhasil"]);
+                }
+                else {
+                    Testimonial::create($validated);
+                    return response()->json(['msg_type' => "success", 'message' => "Simpan berhasil"]);
+                }
+            } catch (ValidationException $e) {
+                $errors = $e->validator->errors();
+                return response()->json(['msg_type' => "warning", 'message' => $errors], 400);
+            } catch (\Throwable $th) {
+                Log::error('[CMS] System Error: ' . $th->getMessage() . ' at line ' . $th->getLine());
+                return response()->json(['message' => 'Terjadi Kesalahan, silahkan coba beberapa saat lagi', 'msg_type' => 'error'], 500);
+            }  
+        }
+
+        if($request->ajax())
+        {
+            $model = Testimonial::query()
+                ->select(['id','nama','institusi','review']);
+
+            return DataTables::of($model)
+            ->addIndexColumn()
+            ->rawColumns(['review'])
+            ->make(true);
+        }
+
+        return view('admin.testimoni', [
+            'title' => 'Data Testimoni'
+        ]);
+    }
+
+    public function testiById($id)
+    {
+        $team = Testimonial::where('id', $id)
+            ->select(['nama', 'profil','institusi','review'])
+            ->first(); 
+        return response()->json(['msg' => "Berhasil",'msg_type' => 'success','data' => $team]);
+    }
+    
+    public function deleteTesti(Request $request)
+    {
+        try {
+            $request->validate([
+                'id' => ['required', 'string']
+            ]);
+
+            $testi = Testimonial::where('id', $request->id)->first();
+            if (!$testi) {
+                return response()->json(['msg_type' => "warning", 'message' => "Data tidak ditemukan"], 404);
+            }
+
+            if(!$this->fileService->deleteFile($testi->profil))
+                Log::error('Gagal hapus img testi: ' . $testi->profil);
+
+            $testi->delete();
             return response()->json(['msg_type' => "success", 'message' => "Data berhasil dihapus"]);
         } catch (ValidationException $e) {
             $errors = $e->validator->errors();

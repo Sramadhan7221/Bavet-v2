@@ -8,6 +8,7 @@ use App\Models\HomeContent;
 use App\Models\Karyawan;
 use App\Models\Pages;
 use App\Models\Service;
+use App\Models\Testimonial;
 use App\Services\BlogService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -40,8 +41,9 @@ class FrontController extends Controller
         $carousels = CarouselBanner::where('status', 'active')
             ->orderBy('urutan')
             ->get();
+        $testi_list = Testimonial::all();
 
-        return view('beranda', compact(['hc','about','galleries','struktural','blogs', 'services', 'carousels']));
+        return view('beranda', compact(['hc','about','galleries','struktural','blogs', 'services', 'carousels', 'testi_list']));
     }
 
     public function blogSearch(Request $request)
