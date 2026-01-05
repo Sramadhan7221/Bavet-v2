@@ -557,7 +557,7 @@
 
               <i class="bi bi-graph-up color-green flex-shrink-0" style="color: #15be56;"></i>
               <div>
-                <span data-purecounter-start="0" data-purecounter-end="{{ $hc->p_kesmavet }}" data-purecounter-duration="1" class="purecounter"></span>
+                <span data-purecounter-start="0" data-purecounter-end="{{ $hc->p_kesmavet ?? 0 }}" data-purecounter-duration="1" class="purecounter"></span>
                 <p>Pengujian Kesmavet</p>
               </div>
             </div>
