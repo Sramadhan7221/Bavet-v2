@@ -21,7 +21,6 @@ class HomeContent extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'is_singleton',
         'title',
         'subtitle',
         'yt_link',
@@ -37,6 +36,12 @@ class HomeContent extends Model
 
     protected $attributes = [
         'is_singleton' => true,
+        'title' => '',
+        'yt_link' => '',
+        'image_hero' => '',
+        'visi' => '',
+        'misi' => '',
+        'p_year' => ''
     ];
 
     protected $casts = [
@@ -51,7 +56,14 @@ class HomeContent extends Model
     {
         return static::firstOrCreate(
             ['is_singleton' => true],
-            [] // default values
+            [
+                'title' => '',
+                'yt_link' => '',
+                'image_hero' => '',
+                'visi' => '',
+                'misi' => '',
+                'p_year' => date('Y')
+            ] // default values
         );
     }
 }
