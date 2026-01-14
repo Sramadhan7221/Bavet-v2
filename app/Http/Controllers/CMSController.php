@@ -9,6 +9,7 @@ use App\Models\Karyawan;
 use App\Models\Menus;
 use App\Models\PageAssets;
 use App\Models\Pages;
+use App\Models\Partner;
 use App\Models\Service;
 use App\Models\Tags;
 use App\Models\Testimonial;
@@ -21,6 +22,7 @@ use App\Validators\GalleryValidator;
 use App\Validators\HomeValidator;
 use App\Validators\KaryawanValidator;
 use App\Validators\MenuValidator;
+use App\Validators\PartnerValidator;
 use App\Validators\ServiceValidator;
 use App\Validators\TestiValidator;
 use Illuminate\Database\Eloquent\Model;
@@ -1135,6 +1137,84 @@ class CMSController extends Controller
                 throw $th;
             }
         });
+    }
+    
+    public function partner(Request $request)
+    {
+        if($request->isMethod('POST')) {
+            try {
+                $validated = PartnerValidator::validate($request);
+
+                if($request->has('logo')) {
+                    $image = $request->file('logo');
+                    $filename = sprintf('mitra-%s', Str::uuid());
+                    $path = $this->fileService->saveFile($image, $filename, 'mitra');
+                    // $validated['logo'] = '<img src="'.url($path).'" width="76" height="76">';
+                    $validated['logo'] = url($path);
+                }
+
+                if(isset($validated['id']))
+                {
+                    Partner::where('id', $validated['id'])->update($validated);
+                    return response()->json(['msg_type' => "success", 'message' => "Update berhasil"]);
+                }
+                else {
+                    Partner::create($validated);
+                    return response()->json(['msg_type' => "success", 'message' => "Simpan berhasil"]);
+                }
+            } catch (ValidationException $e) {
+                $errors = $e->validator->errors();
+                return response()->json(['msg_type' => "warning", 'message' => $errors], 400);
+            } catch (\Throwable $th) {
+                Log::error('[CMS] System Error: ' . $th->getMessage() . ' at line ' . $th->getLine());
+                return response()->json(['message' => 'Terjadi Kesalahan, silahkan coba beberapa saat lagi', 'msg_type' => 'error'], 500);
+            }  
+        }
+
+        if($request->ajax())
+        {
+            $model = Partner::query();
+
+            return DataTables::of($model)
+            ->addIndexColumn()
+            ->make(true);
+        }
+
+        return view('admin.partners', [
+            'title' => 'Mitra kami'
+        ]);
+    }
+
+    public function partnerById($id)
+    {
+        $team = Partner::where('id', $id)->select(['nama','url','logo'])->first(); 
+        return response()->json(['msg' => "Berhasil",'msg_type' => 'success','data' => $team]);
+    }
+
+    public function deletePartner(Request $request)
+    {
+        try {
+            $request->validate([
+                'id' => ['required']
+            ]);
+
+            $partner = Partner::where('id', $request->id)->first();
+            if (!$partner) {
+                return response()->json(['msg_type' => "warning", 'message' => "Data tidak ditemukan"], 404);
+            }
+
+            if(!$this->fileService->deleteFile($partner->logo))
+                Log::alert('[CMS] Gagal menghapus asset icon dengan url: ' . $partner->logo);
+
+            $partner->delete();
+            return response()->json(['msg_type' => "success", 'message' => "Data berhasil dihapus"]);
+        } catch (ValidationException $e) {
+            $errors = $e->validator->errors();
+            return response()->json(['msg_type' => "warning", 'message' => $errors], 400);
+        } catch (\Throwable $th) {
+            Log::error('Kesalahan Sistem: ' . $th->getMessage());
+            return response()->json(['msg' => "Terjadi Kesalahan", "msg_type" => "error"], 500);
+        }
     }
 
     private function handleModuleType() {}

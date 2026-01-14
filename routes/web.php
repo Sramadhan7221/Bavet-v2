@@ -56,4 +56,8 @@ Route::middleware('auth')->group(function () {
     Route::any('cms-testi', [CMSController::class, 'testimonial'])->name('admin.testi');
     Route::get('cms-testi-detail/{id}', [CMSController::class, 'testiById']);
     Route::post('cms-testi-delete', [CMSController::class, 'deleteTesti'])->name('admin.testi-delete');
+
+    Route::any('cms-mitra', [CMSController::class, 'partner'])->name('admin.mitra');
+    Route::get('cms-mitra-detail/{id}', [CMSController::class, 'partnerById']);
+    Route::post('cms-mitra-delete', [CMSController::class, 'deletePartner'])->name('admin.mitra-delete');
 });
