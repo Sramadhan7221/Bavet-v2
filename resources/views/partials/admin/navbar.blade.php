@@ -5,7 +5,7 @@
             <!-- Topbar Brand Logo -->
             <div class="logo-topbar">
                 <!-- Logo light -->
-                <a href="index.html" class="logo-light">
+                <a href="{{ url('/') }}" class="logo-light">
                     <span class="logo-lg">
                         <img src="{{ asset('admin/images/logo.png') }}" alt="logo">
                     </span>
@@ -15,7 +15,7 @@
                 </a>
 
                 <!-- Logo Dark -->
-                <a href="index.html" class="logo-dark">
+                <a href="{{ url('/') }}" class="logo-dark">
                     <span class="logo-lg">
                         <img src="{{ asset('admin/images/logo-dark.png') }}" alt="dark logo">
                     </span>
@@ -74,7 +74,7 @@
                     </div>
 
                     <!-- item-->
-                    <a href="pages-profile.html" class="dropdown-item">
+                    {{-- <a href="pages-profile.html" class="dropdown-item">
                         <i class="ri-account-pin-circle-line fs-16 align-middle me-1 "></i>
                         <span>My Account</span>
                     </a>
@@ -95,10 +95,10 @@
                     <a href="auth-lock-screen.html" class="dropdown-item">                
                         <i class="ri-lock-line fs-16 align-middle me-1"></i>
                         <span>Lock Screen</span>
-                    </a>
+                    </a> --}}
 
                     <!-- item-->
-                    <a href="auth-logout.html" class="dropdown-item">
+                    <a href="#" class="dropdown-item" id="logout">
                         <i class="ri-logout-circle-r-line align-middle me-1"></i>
                         <span>Logout</span>
                     </a>
