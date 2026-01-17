@@ -1173,7 +1173,7 @@ class CMSController extends Controller
 
         if($request->ajax())
         {
-            $model = Partner::query();
+            $model = Partner::query()->select(['id','nama','logo']);
 
             return DataTables::of($model)
             ->addIndexColumn()

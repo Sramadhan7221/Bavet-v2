@@ -12,7 +12,7 @@ class Partner extends Model
      * @var string
      */
 
-    protected $table = 'services';
+    protected $table = 'partners';
     /**
      * The attributes that are mass assignable.
      *

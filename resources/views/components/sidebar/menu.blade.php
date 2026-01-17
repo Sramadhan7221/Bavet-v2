@@ -56,6 +56,14 @@
                     {{-- <span class="badge bg-success float-end">9+</span> --}}
                 </a>
             </li>
+            
+            <li class="side-nav-item">
+                <a href="{{ route('admin.mitra') }}" class="side-nav-link">
+                    <i class="ri-compass-3-line"></i>
+                    <span>Data Mitra</span>
+                    {{-- <span class="badge bg-success float-end">9+</span> --}}
+                </a>
+            </li>
 
             {{-- <li class="side-nav-item">
                 <a href="{{ route('admin.about') }}" class="side-nav-link">

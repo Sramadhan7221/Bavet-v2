@@ -237,6 +237,24 @@
                     {
                         className: "my-column",
                         data: "nama"
+                    },
+                    {
+                        className: "my-column",
+                        data: null,
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, row) {
+                            return `
+                                <div class="btn-group btn-group-sm gap-2" role="group" aria-label="Small button group">
+                                    <button type="button" class="btn btn-warning edit" data-toggle="tooltip" data-placement="top" title="Edit Item" data-id="${row.id}">
+                                        <i class="ri-edit-2-line"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-danger delete" data-toggle="tooltip" data-placement="top" title="Hapus Item" data-id="${row.id}">
+                                        <i class="ri-delete-bin-5-line"></i>
+                                    </button>
+                                </div>
+                            `;
+                        }
                     }
                 ],
                 drawCallback: function() {
@@ -248,7 +266,7 @@
             $('.overlay-me').on('click', function(e) {
                 e.stopImmediatePropagation();
                 e.preventDefault();
-                $('#icon').click();
+                $('#logo').click();
             });
 
             // Icon preview handler
@@ -271,7 +289,7 @@
                 const iconFile = $('#logo')[0].files[0];
                 
                 if (iconFile) {
-                    formData.append('icon', iconFile);
+                    formData.append('logo', iconFile);
                 }
 
                 // Append form fields
@@ -412,9 +430,9 @@
                     
                     if (data) {
                         $("#id").val(id);
-                        $("#nama").val(data.title || '');
-                        $("#url").val(data.desc || '');
-                        $("#iconPict").attr("src", data?.logo !== "" ? extractSrc(data.logo) : "{{ asset('assets/img/icon-img.png') }}");
+                        $("#nama").val(data.nama || '');
+                        $("#url").val(data.url || '');
+                        $("#iconPict").attr("src", data?.logo !== "" ? data.logo : "{{ asset('assets/img/icon-img.png') }}");
                         $("#nama").focus();
                         $("#addRecord").html(`<i class="ri-save-3-fill"></i> Simpan`);
                     }
@@ -473,12 +491,5 @@
             }
         });
 
-        function extractSrc(htmlString) {
-            let parser = new DOMParser();
-            let doc = parser.parseFromString(htmlString, 'text/html');
-            let src = doc.querySelector('img').src;
-
-            return src;
-        }
     </script>
 @endpush
