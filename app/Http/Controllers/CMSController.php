@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -1130,9 +1131,11 @@ class CMSController extends Controller
                 $id = $request->input('id');
                 if ($request->filled('id') && is_numeric($id)) {
                     FaqData::where('id', (int)$id)->update($validated);
+                    Cache::forget('faq_html');
                     return response()->json(['msg_type' => "success", 'message' => "Update berhasil"]);
                 } else {
                     FaqData::create($validated);
+                    Cache::forget('faq_html');
                     return response()->json(['msg_type' => "success", 'message' => "Simpan berhasil"]);
                 }
             } catch (ValidationException $e) {
@@ -1181,6 +1184,7 @@ class CMSController extends Controller
             }
 
             $faq->delete();
+            Cache::forget('faq_html');
             return response()->json(['msg_type' => "success", 'message' => "Data berhasil dihapus"]);
         } catch (ValidationException $e) {
             $errors = $e->validator->errors();

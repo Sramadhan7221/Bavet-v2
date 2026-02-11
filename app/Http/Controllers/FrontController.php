@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AboutContent;
 use App\Models\CarouselBanner;
+use App\Models\FaqData;
 use App\Models\HomeContent;
 use App\Models\Karyawan;
 use App\Models\Pages;
@@ -13,6 +14,7 @@ use App\Models\Testimonial;
 use App\Services\BlogService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class FrontController extends Controller
@@ -40,8 +42,9 @@ class FrontController extends Controller
             ->get();
         $testi_list = Testimonial::orderByDesc('created_at')->limit(10)->get();
         $partners = Partner::orderByDesc('created_at')->limit(10)->get();
+        $faqHtml = $this->getFaq();
 
-        return view('beranda', compact(['hc','galleries','blogs', 'services', 'carousels', 'testi_list', 'partners']));
+        return view('beranda', compact(['hc','galleries','blogs', 'services', 'carousels', 'testi_list', 'partners', 'faqHtml']));
     }
 
     public function blogSearch(Request $request)
@@ -212,5 +215,58 @@ class FrontController extends Controller
             'desc' => $page->content
         ]);
 
+    }
+
+    private function getFaq()
+    {
+        // Cache the FAQ HTML for 24 hours (1440 minutes)
+        $container = Cache::remember('faq_html', 1440, function () {
+            $faqs = FaqData::orderBy('created_at', 'asc')->limit(6)->get();
+            
+            // Divide the collection into two halves
+            $halfCount = ceil($faqs->count() / 2);
+            $firstColumn = $faqs->take($halfCount);
+            $secondColumn = $faqs->slice($halfCount);
+            
+            // Build first column
+            $firstColumnHtml = '';
+            foreach ($firstColumn as $index => $faq) {
+                $activeClass = $index === 0 ? ' faq-active' : '';
+                $firstColumnHtml .= '<div class="faq-item' . $activeClass . '">
+                        <h3>' . $faq->question . '</h3>
+                        <div class="faq-content">
+                        ' . $faq->answer . '
+                        </div>
+                        <i class="faq-toggle bi bi-chevron-right"></i>
+                    </div><!-- End Faq item-->' . "\n";
+            }
+            
+            // Build second column
+            $secondColumnHtml = '';
+            foreach ($secondColumn as $faq) {
+                $secondColumnHtml .= '<div class="faq-item">
+                        <h3>' . $faq->question . '</h3>
+                        <div class="faq-content">
+                        ' . $faq->answer . '
+                        </div>
+                        <i class="faq-toggle bi bi-chevron-right"></i>
+                    </div><!-- End Faq item-->' . "\n";
+            }
+            
+            return '<div class="row">
+                <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="faq-container">
+                    ' . $firstColumnHtml . '
+                    </div>
+                </div><!-- End Faq Column-->
+                <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="faq-container">
+                    ' . $secondColumnHtml . '
+                    </div>
+                </div><!-- End Faq Column-->
+                </div>';
+        });
+        
+        return $container;
     }
 }

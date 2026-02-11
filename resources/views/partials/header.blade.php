@@ -25,18 +25,18 @@
           </li>
           <li class="dropdown"><a href="#contact"><span>Kontak</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
             <ul>
-              <li><a href="#">Kantor Administrasi</a></li>
-              <li class="dropdown"><a href="#"><span>Satuan Pelayanan Lab</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+              <li><a href="#contact" data-location-id="1">Kantor Administrasi</a></li>
+              <li class="dropdown"><a href="#contact"><span>Satuan Pelayanan Lab</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                 <ul>
-                  <li><a href="#">Laboratorium Cikole</a></li>
-                  <li><a href="#">Laboratorium Losari</a></li>
+                  <li><a href="#contact" data-location-id="2">Laboratorium Cikole</a></li>
+                  <li><a href="#contact" data-location-id="3">Laboratorium Losari</a></li>
                 </ul>
               </li>
-              <li class="dropdown"><a href="#"><span>Satuan Pelayanan</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+              <li class="dropdown"><a href="#contact" data-location-id=""><span>Satuan Pelayanan</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                 <ul>
-                  <li><a href="#">Satpel Losari</a></li>
-                  <li><a href="#">Satpel Banjar</a></li>
-                  <li><a href="#">Satpel Gunung Sindur</a></li>
+                  <li><a href="#contact" data-location-id="4">Satpel Losari</a></li>
+                  <li><a href="#contact" data-location-id="5">Satpel Banjar</a></li>
+                  <li><a href="#contact" data-location-id="6">Satpel Gunung Sindur</a></li>
                 </ul>
               </li>
             </ul>

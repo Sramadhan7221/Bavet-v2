@@ -832,143 +832,81 @@
 
       <div class="container">
 
-        <div class="row">
-
-          <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
-
-            <div class="faq-container">
-
-              <div class="faq-item faq-active">
-                <h3>Non consectetur a erat nam at lectus urna duis?</h3>
-                <div class="faq-content">
-                  <p>Feugiat pretium nibh ipsum consequat. Tempus iaculis urna id volutpat lacus laoreet non curabitur gravida. Venenatis lectus magna fringilla urna porttitor rhoncus dolor purus non.</p>
-                </div>
-                <i class="faq-toggle bi bi-chevron-right"></i>
-              </div><!-- End Faq item-->
-
-              <div class="faq-item">
-                <h3>Feugiat scelerisque varius morbi enim nunc faucibus a pellentesque?</h3>
-                <div class="faq-content">
-                  <p>Dolor sit amet consectetur adipiscing elit pellentesque habitant morbi. Id interdum velit laoreet id donec ultrices. Fringilla phasellus faucibus scelerisque eleifend donec pretium. Est pellentesque elit ullamcorper dignissim. Mauris ultrices eros in cursus turpis massa tincidunt dui.</p>
-                </div>
-                <i class="faq-toggle bi bi-chevron-right"></i>
-              </div><!-- End Faq item-->
-
-              <div class="faq-item">
-                <h3>Dolor sit amet consectetur adipiscing elit pellentesque?</h3>
-                <div class="faq-content">
-                  <p>Eleifend mi in nulla posuere sollicitudin aliquam ultrices sagittis orci. Faucibus pulvinar elementum integer enim. Sem nulla pharetra diam sit amet nisl suscipit. Rutrum tellus pellentesque eu tincidunt. Lectus urna duis convallis convallis tellus. Urna molestie at elementum eu facilisis sed odio morbi quis</p>
-                </div>
-                <i class="faq-toggle bi bi-chevron-right"></i>
-              </div><!-- End Faq item-->
-
-            </div>
-
-          </div><!-- End Faq Column-->
-
-          <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
-
-            <div class="faq-container">
-
-              <div class="faq-item">
-                <h3>Ac odio tempor orci dapibus. Aliquam eleifend mi in nulla?</h3>
-                <div class="faq-content">
-                  <p>Dolor sit amet consectetur adipiscing elit pellentesque habitant morbi. Id interdum velit laoreet id donec ultrices. Fringilla phasellus faucibus scelerisque eleifend donec pretium. Est pellentesque elit ullamcorper dignissim. Mauris ultrices eros in cursus turpis massa tincidunt dui.</p>
-                </div>
-                <i class="faq-toggle bi bi-chevron-right"></i>
-              </div><!-- End Faq item-->
-
-              <div class="faq-item">
-                <h3>Tempus quam pellentesque nec nam aliquam sem et tortor consequat?</h3>
-                <div class="faq-content">
-                  <p>Molestie a iaculis at erat pellentesque adipiscing commodo. Dignissim suspendisse in est ante in. Nunc vel risus commodo viverra maecenas accumsan. Sit amet nisl suscipit adipiscing bibendum est. Purus gravida quis blandit turpis cursus in</p>
-                </div>
-                <i class="faq-toggle bi bi-chevron-right"></i>
-              </div><!-- End Faq item-->
-
-              <div class="faq-item">
-                <h3>Perspiciatis quod quo quos nulla quo illum ullam?</h3>
-                <div class="faq-content">
-                  <p>Enim ea facilis quaerat voluptas quidem et dolorem. Quis et consequatur non sed in suscipit sequi. Distinctio ipsam dolore et.</p>
-                </div>
-                <i class="faq-toggle bi bi-chevron-right"></i>
-              </div><!-- End Faq item-->
-
-            </div>
-
-          </div><!-- End Faq Column-->
-
-        </div>
+        {!! $faqHtml !!}
 
       </div>
 
     </section><!-- /Faq Section -->
 
     <!-- Contact Section -->
-    <section id="contact" class="contact section">
+  <section id="contact" class="contact section">
 
-      <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-        <h2>kontak</h2>
-        <p>Kontak kami</p>
-      </div><!-- End Section Title -->
+    <!-- Section Title -->
+    <div class="container section-title" data-aos="fade-up">
+      <h2>kontak</h2>
+      <p id="contact-title">Kontak kami</p>
+    </div><!-- End Section Title -->
 
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
 
-        <div class="row gy-4">
+      <div class="row gy-4">
 
-          <div class="col-lg-6">
+        <div class="col-lg-6">
 
-            <div class="row gy-4">
-              <div class="col-md-6">
-                <div class="info-item" data-aos="fade" data-aos-delay="200">
-                  <i class="bi bi-geo-alt"></i>
-                  <h3>Alamat</h3>
-                  <p>Jl. Tangkuban Parahu</p>
-                  <p>Cikole, Bandung Barat</p>
+          <div class="row gy-4">
+            <div class="col-md-6">
+              <div class="info-item" data-aos="fade" data-aos-delay="200">
+                <i class="bi bi-geo-alt"></i>
+                <h3>Alamat</h3>
+                <div id="contact-alamat">
+                  <p>Loading...</p>
                 </div>
-              </div><!-- End Info Item -->
+              </div>
+            </div><!-- End Info Item -->
 
-              <div class="col-md-6">
-                <div class="info-item" data-aos="fade" data-aos-delay="300">
-                  <i class="bi bi-telephone"></i>
-                  <h3>Telpon</h3>
-                  <p>+1 5589 55488 55</p>
-                  <p>+1 6678 254445 41</p>
+            <div class="col-md-6">
+              <div class="info-item" data-aos="fade" data-aos-delay="300">
+                <i class="bi bi-telephone"></i>
+                <h3>Telpon</h3>
+                <div id="contact-telpon">
+                  <p>Loading...</p>
                 </div>
-              </div><!-- End Info Item -->
+              </div>
+            </div><!-- End Info Item -->
 
-              <div class="col-md-6">
-                <div class="info-item" data-aos="fade" data-aos-delay="400">
-                  <i class="bi bi-envelope"></i>
-                  <h3>Email</h3>
-                  <p>info@example.com</p>
-                  <p>contact@example.com</p>
+            <div class="col-md-6">
+              <div class="info-item" data-aos="fade" data-aos-delay="400">
+                <i class="bi bi-envelope"></i>
+                <h3>Email</h3>
+                <div id="contact-email">
+                  <p>Loading...</p>
                 </div>
-              </div><!-- End Info Item -->
+              </div>
+            </div><!-- End Info Item -->
 
-              <div class="col-md-6">
-                <div class="info-item" data-aos="fade" data-aos-delay="500">
-                  <i class="bi bi-clock"></i>
-                  <h3>Jam Pelayanan</h3>
-                  <p>Monday - Friday</p>
-                  <p>9:00AM - 05:00PM</p>
+            <div class="col-md-6">
+              <div class="info-item" data-aos="fade" data-aos-delay="500">
+                <i class="bi bi-clock"></i>
+                <h3>Jam Pelayanan</h3>
+                <div id="contact-jam">
+                  <p>Loading...</p>
                 </div>
-              </div><!-- End Info Item -->
-
-            </div>
+              </div>
+            </div><!-- End Info Item -->
 
           </div>
 
-          <div class="col-lg-6">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126757.2319022395!2d107.55669202021456!3d-6.8710040725830694!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e0151b39c079%3A0x9f5ab4972d82e5b2!2sRumah%20Sakit%20Hewan%20Jawa%20Barat!5e0!3m2!1sid!2sid!4v1757980581739!5m2!1sid!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-          </div><!-- End Contact Form -->
-
         </div>
+
+        <div class="col-lg-6" id="map-container">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126757.2319022395!2d107.55669202021456!3d-6.8710040725830694!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e0151b39c079%3A0x9f5ab4972d82e5b2!2sRumah%20Sakit%20Hewan%20Jawa%20Barat!5e0!3m2!1sid!2sid!4v1757980581739!5m2!1sid!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div><!-- End Contact Form -->
 
       </div>
 
-    </section><!-- /Contact Section -->
+    </div>
+
+  </section><!-- /Contact Section -->
 
   </main>
 
@@ -1052,6 +990,117 @@
         }
       }
     });
+
+    // Load default location (Kantor Administrasi) on page load
+    loadLocationContact(1);
+  
+    // Handle click events on location links
+    $('.location-link').on('click', function(e) {
+      e.preventDefault();
+      
+      var locationId = $(this).data('location-id');
+      var locationName = $(this).text();
+      
+      // Update title
+      $('#contact-title').text(locationName);
+      
+      // Load contact data
+      loadLocationContact(locationId);
+      
+      // Smooth scroll to contact section
+      $('html, body').animate({
+          scrollTop: $('#contact').offset().top - 100
+      }, 800);
+    });
+      
+    function loadLocationContact(locationId) {
+        // Show loading state with animation
+        $('#contact-alamat').html('<p class="text-muted"><i class="bi bi-hourglass-split"></i> Loading...</p>');
+        $('#contact-telpon').html('<p class="text-muted"><i class="bi bi-hourglass-split"></i> Loading...</p>');
+        $('#contact-email').html('<p class="text-muted"><i class="bi bi-hourglass-split"></i> Loading...</p>');
+        $('#contact-jam').html('<p class="text-muted"><i class="bi bi-hourglass-split"></i> Loading...</p>');
+        
+        // Add loading overlay to map
+        $('#map-container').css('opacity', '0.5');
+        
+        // AJAX request to fetch location data
+        $.ajax({
+            url: '/api/location-contact/' + locationId,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                // Update contact information with fade effect
+                $('#contact-alamat').fadeOut(200, function() {
+                    // Split address by line breaks or commas
+                    var alamatLines = data.alamat.split('\n');
+                    var alamatHtml = '';
+                    $.each(alamatLines, function(index, line) {
+                        if(line.trim()) {
+                            alamatHtml += '<p>' + line.trim() + '</p>';
+                        }
+                    });
+                    $(this).html(alamatHtml).fadeIn(200);
+                });
+                
+                $('#contact-telpon').fadeOut(200, function() {
+                    var telponLines = data.telpon.split('\n');
+                    var telponHtml = '';
+                    $.each(telponLines, function(index, line) {
+                        if(line.trim()) {
+                            telponHtml += '<p>' + line.trim() + '</p>';
+                        }
+                    });
+                    $(this).html(telponHtml).fadeIn(200);
+                });
+                
+                $('#contact-email').fadeOut(200, function() {
+                    var emailLines = data.email.split('\n');
+                    var emailHtml = '';
+                    $.each(emailLines, function(index, line) {
+                        if(line.trim()) {
+                            emailHtml += '<p><a href="mailto:' + line.trim() + '">' + line.trim() + '</a></p>';
+                        }
+                    });
+                    $(this).html(emailHtml).fadeIn(200);
+                });
+                
+                $('#contact-jam').fadeOut(200, function() {
+                    var jamLines = data.jam_pelayanan.split('\n');
+                    var jamHtml = '';
+                    $.each(jamLines, function(index, line) {
+                        if(line.trim()) {
+                            jamHtml += '<p>' + line.trim() + '</p>';
+                        }
+                    });
+                    $(this).html(jamHtml).fadeIn(200);
+                });
+                
+                // Update Google Maps iframe with fade effect
+                $('#map-container').fadeOut(300, function() {
+                    $(this).html(data.location).fadeIn(300);
+                    $(this).css('opacity', '1');
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error loading contact data:', error);
+                
+                // Show error message
+                $('#contact-alamat').html('<p class="text-danger">Error loading data</p>');
+                $('#contact-telpon').html('<p class="text-danger">Error loading data</p>');
+                $('#contact-email').html('<p class="text-danger">Error loading data</p>');
+                $('#contact-jam').html('<p class="text-danger">Error loading data</p>');
+                
+                $('#map-container').css('opacity', '1');
+                
+                // Show user-friendly error message
+                if(xhr.status === 404) {
+                    alert('Data lokasi tidak ditemukan');
+                } else {
+                    alert('Terjadi kesalahan saat memuat data. Silakan coba lagi.');
+                }
+            }
+        });
+    }
   </script>
 
 </body>
