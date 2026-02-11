@@ -7,6 +7,7 @@ use App\Models\CarouselBanner;
 use App\Models\HomeContent;
 use App\Models\Karyawan;
 use App\Models\Pages;
+use App\Models\Partner;
 use App\Models\Service;
 use App\Models\Testimonial;
 use App\Services\BlogService;
@@ -20,7 +21,6 @@ class FrontController extends Controller
     {
 
         $hc = HomeContent::first();
-        $about = AboutContent::first();
         $galleries = Pages::where('type', 'gallery')
             ->where('is_active', 'true')
             ->with('assets')
@@ -33,17 +33,15 @@ class FrontController extends Controller
             ->orderByDesc('created_at')
             ->limit(10)
             ->get();
-        $struktural = Karyawan::where('struktural', true)
-            ->orderBy('urutan')
-            ->limit($hc?->maks_struktural ?? 1)
-            ->get();
+        
         $services = Service::all();
         $carousels = CarouselBanner::where('status', 'active')
             ->orderBy('urutan')
             ->get();
-        $testi_list = Testimonial::all();
+        $testi_list = Testimonial::orderByDesc('created_at')->limit(10)->get();
+        $partners = Partner::orderByDesc('created_at')->limit(10)->get();
 
-        return view('beranda', compact(['hc','about','galleries','struktural','blogs', 'services', 'carousels', 'testi_list']));
+        return view('beranda', compact(['hc','galleries','blogs', 'services', 'carousels', 'testi_list', 'partners']));
     }
 
     public function blogSearch(Request $request)

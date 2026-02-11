@@ -60,4 +60,8 @@ Route::middleware('auth')->group(function () {
     Route::any('cms-mitra', [CMSController::class, 'partner'])->name('admin.mitra');
     Route::get('cms-mitra-detail/{id}', [CMSController::class, 'partnerById']);
     Route::post('cms-mitra-delete', [CMSController::class, 'deletePartner'])->name('admin.mitra-delete');
+
+    Route::any('cms-faq', [CMSController::class, 'faqData'])->name('admin.faq');
+    Route::get('cms-faq-detail/{id}', [CMSController::class, 'faqById']);
+    Route::post('cms-faq-delete', [CMSController::class, 'deleteFaq'])->name('admin.faq-delete');
 });

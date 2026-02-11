@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AboutContent;
 use App\Models\CarouselBanner;
+use App\Models\FaqData;
 use App\Models\HomeContent;
 use App\Models\Karyawan;
 use App\Models\Menus;
@@ -18,6 +19,7 @@ use App\Services\HomeContentService;
 use App\Validators\AboutValidator;
 use App\Validators\BeritaValidator;
 use App\Validators\CarouselBannerValidator;
+use App\Validators\FaqValidator;
 use App\Validators\GalleryValidator;
 use App\Validators\HomeValidator;
 use App\Validators\KaryawanValidator;
@@ -1109,6 +1111,76 @@ class CMSController extends Controller
                 Log::error('Gagal hapus img testi: ' . $testi->profil);
 
             $testi->delete();
+            return response()->json(['msg_type' => "success", 'message' => "Data berhasil dihapus"]);
+        } catch (ValidationException $e) {
+            $errors = $e->validator->errors();
+            return response()->json(['msg_type' => "warning", 'message' => $errors], 400);
+        } catch (\Throwable $th) {
+            Log::error('Kesalahan Sistem: ' . $th->getMessage());
+            return response()->json(['msg' => "Terjadi Kesalahan", "msg_type" => "error"], 500);
+        }
+    }
+
+    public function faqData(Request $request)
+    {
+        if($request->isMethod('POST')) {
+            try {
+                $validated = FaqValidator::validate($request);
+
+                $id = $request->input('id');
+                if ($request->filled('id') && is_numeric($id)) {
+                    FaqData::where('id', (int)$id)->update($validated);
+                    return response()->json(['msg_type' => "success", 'message' => "Update berhasil"]);
+                } else {
+                    FaqData::create($validated);
+                    return response()->json(['msg_type' => "success", 'message' => "Simpan berhasil"]);
+                }
+            } catch (ValidationException $e) {
+                $errors = $e->validator->errors();
+                return response()->json(['msg_type' => "warning", 'message' => $errors], 400);
+            } catch (\Throwable $th) {
+                Log::error('[CMS] System Error: ' . $th->getMessage() . ' at line ' . $th->getLine());
+                return response()->json(['message' => 'Terjadi Kesalahan, silahkan coba beberapa saat lagi', 'msg_type' => 'error'], 500);
+            }  
+        }
+
+        if($request->ajax())
+        {
+            $model = FaqData::query()
+                ->select(['id','question','answer']);
+
+            return DataTables::of($model)
+            ->addIndexColumn()
+            ->rawColumns(['question','answer'])
+            ->make(true);
+        }
+
+        return view('admin.faq', [
+            'title' => 'Data FAQ'
+        ]);
+    }
+
+    public function faqById($id)
+    {
+        $team = FaqData::where('id', $id)
+            ->select(['question', 'answer'])
+            ->first(); 
+        return response()->json(['msg' => "Berhasil",'msg_type' => 'success','data' => $team]);
+    }
+    
+    public function deleteFaq(Request $request)
+    {
+        try {
+            $request->validate([
+                'id' => ['required', 'numeric']
+            ]);
+
+            $faq = FaqData::where('id', $request->id)->first();
+            if (!$faq) {
+                return response()->json(['msg_type' => "warning", 'message' => "Data tidak ditemukan"], 404);
+            }
+
+            $faq->delete();
             return response()->json(['msg_type' => "success", 'message' => "Data berhasil dihapus"]);
         } catch (ValidationException $e) {
             $errors = $e->validator->errors();
