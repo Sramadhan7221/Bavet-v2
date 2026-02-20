@@ -262,7 +262,8 @@
                         className: "my-column",
                         data: "icon",
                         render: function(data, type, row) {
-                            return `<div class="">${row.icon}</div>`
+                            var iconPict = row.icon ?? "-";
+                            return `<div class="">${iconPict}</div>`
                             // return `<img src="${data}" alt="Icon" style="width: 50px; height: 50px; object-fit: cover;">`;
                         }
                     },
