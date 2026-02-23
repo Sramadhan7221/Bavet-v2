@@ -129,6 +129,63 @@ class FrontController extends Controller
         ]);
     }
 
+    public function layanan(Request $request)
+    {
+        $slug = $request->input('page');
+        
+        // Return 404 if no slug provided
+        if (!$slug) {
+            abort(404);
+        }
+
+        // Fetch the page post
+        $currentPost = Service::where('slug', $slug)->first();
+        
+        // Return 404 if post not found
+        if (!$currentPost) {
+            abort(404);
+        }
+
+        //convert service to Page 
+        $servicePage = new Pages();
+        $servicePage->title = $currentPost->title;
+        $servicePage->slug = $currentPost->slug;
+        $servicePage->banner = $currentPost->banner;
+        $servicePage->content = $currentPost->content;
+        $servicePage->content = $currentPost->content;
+
+        // Process content based on post type
+        $this->processPostContent($servicePage);
+
+        $heroImg = $this->getHeroImage($servicePage);
+
+        // Set locale for date formatting
+        Carbon::setLocale('id');
+
+        // Format article date
+        $tanggalArtikel = Carbon::parse($currentPost->created_at)->translatedFormat('d F Y');
+
+        // Build breadcrumb
+        $breadcrumb =  $this->buildBreadcrumb($servicePage);
+
+        // Fetch latest posts
+        $latestPost = Pages::where('type', 'blog')
+            ->with(['penulis', 'tags'])
+            ->orderByDesc('created_at')
+            ->limit(5)
+            ->get();
+
+        return view('blog', [
+            'breadcrumb' => $breadcrumb,
+            'img_hero' => $heroImg,
+            'penulis' => (object)['name' => 'Balai Keswan Kesmavet Jabar', 'tiktok' => '', 'facebook' => '', 'instagram' => ''],
+            'tgl' => $tanggalArtikel,
+            'tags' => collect([]),
+            'post' => $servicePage,
+            'latest_post' => $latestPost,
+        ]);
+    }
+
     /**
      * Process and format post content
      */

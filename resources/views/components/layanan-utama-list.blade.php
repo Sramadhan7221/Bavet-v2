@@ -6,7 +6,7 @@
                 {!! $layanan->icon !!}
                 <h3 class="pt-3">{{ $layanan->title }}</h3>
                 <p>{{ $layanan->desc }}</p>
-                <a href="#" class="read-more stretched-link"><span>Read More</span> <i class="bi bi-arrow-right"></i></a>
+                <a href="{{ route('layanan-kami') }}?page={{ $layanan->slug }}" class="read-more stretched-link"><span>Selengkapnya</span> <i class="bi bi-arrow-right"></i></a>
             </div>
         </div><!-- End Service Item -->
     @endforeach

@@ -9,6 +9,7 @@ Route::get('/', [FrontController::class, 'index'])->name('beranda');
 Route::get('/artikel', [FrontController::class, 'blog'])->name('artikel.detail');
 Route::get('/artikel-search', [FrontController::class, 'blogSearch'])->name('artikel.cari');
 Route::get('/galeri/{page}', [FrontController::class, 'gallery'])->name('galeri.detail');
+Route::get('/layanan-kami', [FrontController::class, 'layanan'])->name('layanan-kami');
 
 
 
