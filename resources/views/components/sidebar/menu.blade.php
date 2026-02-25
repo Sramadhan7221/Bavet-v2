@@ -72,7 +72,14 @@
                     {{-- <span class="badge bg-success float-end">9+</span> --}}
                 </a>
             </li>
-
+            
+            <li class="side-nav-item">
+                <a href="{{ route('location.index') }}" class="side-nav-link">
+                    <i class="ri-compass-3-line"></i>
+                    <span>Data Kontak</span>
+                    {{-- <span class="badge bg-success float-end">9+</span> --}}
+                </a>
+            </li>
             {{-- <li class="side-nav-item">
                 <a href="{{ route('admin.about') }}" class="side-nav-link">
                     <i class="ri-compass-3-line"></i>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AboutContent;
 use App\Models\CarouselBanner;
+use App\Models\ContactData;
 use App\Models\FaqData;
 use App\Models\HomeContent;
 use App\Models\Karyawan;
@@ -19,6 +20,7 @@ use App\Services\HomeContentService;
 use App\Validators\AboutValidator;
 use App\Validators\BeritaValidator;
 use App\Validators\CarouselBannerValidator;
+use App\Validators\ContactValidator;
 use App\Validators\FaqValidator;
 use App\Validators\GalleryValidator;
 use App\Validators\HomeValidator;
@@ -1291,6 +1293,156 @@ class CMSController extends Controller
             Log::error('Kesalahan Sistem: ' . $th->getMessage());
             return response()->json(['msg' => "Terjadi Kesalahan", "msg_type" => "error"], 500);
         }
+    }
+
+    /**
+     * Display the location wizard form
+     */
+    public function contactData()
+    {
+        // Get all 6 locations (create if not exist)
+        $this->ensureAllLocationsExist();
+        
+        $locations = ContactData::whereIn('id', [1, 2, 3, 4, 5, 6])
+            ->orderBy('id')
+            ->get()
+            ->keyBy('id');
+
+        // Make sure detail is always an array
+        foreach ($locations as $location) {
+            if (is_string($location->detail)) {
+                $location->detail = json_decode($location->detail, true);
+            }
+        }
+
+        $title = "Data Kontak Lokasi";
+        
+        return view('admin.contact-data', compact('locations', 'title'));
+    }
+    
+    /**
+     * Update all locations
+     */
+    public function contactUpdate(Request $request)
+    {   
+        try {
+            // Validation rules
+            ContactValidator::validate($request);
+
+            DB::beginTransaction();
+            
+            foreach ($request->locations as $locationData) {
+                // Validate location format (must be iframe or /)
+                if ($locationData['location'] !== '/' && !str_contains($locationData['location'], '<iframe')) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Format Google Maps tidak valid pada lokasi ID: ' . $locationData['id']
+                    ], 422);
+                }
+                
+                // Prepare detail array (Model cast will handle JSON encoding)
+                $detail = [
+                    'alamat' => trim($locationData['alamat']),
+                    'telpon' => trim($locationData['telpon']),
+                    'email' => trim($locationData['email']),
+                    'jam_pelayanan' => trim($locationData['jam_pelayanan']),
+                ];
+                
+                // Update or create location (pass as array, not JSON string)
+                ContactData::updateOrCreate(
+                    ['id' => $locationData['id']],
+                    [
+                        'detail' => $detail, // Don't json_encode, let model cast handle it
+                        'location' => trim($locationData['location'])
+                    ]
+                );
+                
+                // Clear cache for this location
+                Cache::forget('location_contact_' . $locationData['id_contact']);
+            }
+            
+            DB::commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Data lokasi berhasil disimpan'
+            ]);
+            
+        }
+        catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $e->errors()
+            ], 422);
+        }
+        catch (\Exception $e) {
+            DB::rollBack();
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    /**
+     * Ensure all 6 locations exist in database
+     */
+    private function ensureAllLocationsExist()
+    {
+        $defaultLocations = [
+            1 => 'Kantor Administrasi',
+            2 => 'Laboratorium Cikole',
+            3 => 'Laboratorium Losari',
+            4 => 'Satpel Losari',
+            5 => 'Satpel Banjar',
+            6 => 'Satpel Gunung Sindur',
+        ];
+        
+        foreach ($defaultLocations as $id => $name) {
+            ContactData::firstOrCreate(
+                ['id' => $id],
+                [
+                    'detail' => [
+                        'alamat' => 'Alamat belum diisi',
+                        'telpon' => 'Telpon belum diisi',
+                        'email' => 'Email belum diisi',
+                        'jam_pelayanan' => 'Jam pelayanan belum diisi',
+                    ], // Pass as array, not JSON string
+                    'location' => '/'
+                ]
+            );
+        }
+    }
+    
+    /**
+     * Get single location data (for AJAX)
+     */
+    public function getLocation($id)
+    {
+        $location = ContactData::find($id);
+        
+        if (!$location) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Location not found'
+            ], 404);
+        }
+        
+        $detail = is_array($location->detail) ? $location->detail : json_decode($location->detail, true);
+        
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $location->id,
+                'alamat' => $detail['alamat'] ?? '',
+                'telpon' => $detail['telpon'] ?? '',
+                'email' => $detail['email'] ?? '',
+                'jam_pelayanan' => $detail['jam_pelayanan'] ?? '',
+                'location' => $location->location
+            ]
+        ]);
     }
 
     private function handleModuleType() {}

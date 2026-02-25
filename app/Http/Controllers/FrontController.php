@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AboutContent;
 use App\Models\CarouselBanner;
+use App\Models\ContactData;
 use App\Models\FaqData;
 use App\Models\HomeContent;
 use App\Models\Karyawan;
@@ -325,5 +326,35 @@ class FrontController extends Controller
         });
         
         return $container;
+    }
+
+    /**
+     * Get location contact for public frontend (with caching)
+     */
+    public function getLocationContact($id)
+    {
+        $data = Cache::remember('location_contact_' . $id, 1440, function () use ($id) {
+            $location = ContactData::where('id_contact', $id)->first();
+            
+            if (!$location) {
+                return null;
+            }
+            
+            $detail = is_array($location->detail) ? $location->detail : json_decode($location->detail, true);
+            
+            return [
+                'alamat' => $detail['alamat'] ?? '',
+                'telpon' => $detail['telpon'] ?? '',
+                'email' => $detail['email'] ?? '',
+                'jam_pelayanan' => $detail['jam_pelayanan'] ?? '',
+                'location' => $location->location
+            ];
+        });
+        
+        if (!$data) {
+            return response()->json(['error' => 'Location not found'], 404);
+        }
+        
+        return response()->json($data);
     }
 }

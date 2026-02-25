@@ -847,7 +847,7 @@
       <p id="contact-title">Kontak kami</p>
     </div><!-- End Section Title -->
 
-    <div class="container" data-aos="fade-up" data-aos-delay="100">
+    <div class="container mt-3" data-aos="fade-up" data-aos-delay="100">
 
       <div class="row gy-4">
 
@@ -917,6 +917,7 @@
 
   @include('partials.scripts')
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-4.0.0.min.js" integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao=" crossorigin="anonymous"></script>
   <script>
     // Initialize Swiper
     const swiper = new Swiper('#purpleBannerSlider', {
@@ -990,9 +991,12 @@
         }
       }
     });
+  </script>
 
-    // Load default location (Kantor Administrasi) on page load
-    loadLocationContact(1);
+  <script>
+    $(document).ready(function () {
+      // Load default location (Kantor Administrasi) on page load
+      loadLocationContact("office");
   
     // Handle click events on location links
     $('.location-link').on('click', function(e) {
@@ -1010,99 +1014,100 @@
       // Smooth scroll to contact section
       $('html, body').animate({
           scrollTop: $('#contact').offset().top - 100
-      }, 800);
+        }, 800);
+      });
+        
+      function loadLocationContact(locationId) {
+          // Show loading state with animation
+          $('#contact-alamat').html('<p class="text-muted"><i class="bi bi-hourglass-split"></i> Loading...</p>');
+          $('#contact-telpon').html('<p class="text-muted"><i class="bi bi-hourglass-split"></i> Loading...</p>');
+          $('#contact-email').html('<p class="text-muted"><i class="bi bi-hourglass-split"></i> Loading...</p>');
+          $('#contact-jam').html('<p class="text-muted"><i class="bi bi-hourglass-split"></i> Loading...</p>');
+          
+          // Add loading overlay to map
+          $('#map-container').css('opacity', '0.5');
+          
+          // AJAX request to fetch location data
+          $.ajax({
+              url: `{{ url('location-contact') }}/${locationId}`,
+              type: 'GET',
+              dataType: 'json',
+              success: function(data) {
+                  // Update contact information with fade effect
+                  $('#contact-alamat').fadeOut(200, function() {
+                      // Split address by line breaks or commas
+                      var alamatLines = data.alamat.split('\n');
+                      var alamatHtml = '';
+                      $.each(alamatLines, function(index, line) {
+                          if(line.trim()) {
+                              alamatHtml += '<p>' + line.trim() + '</p>';
+                          }
+                      });
+                      $(this).html(alamatHtml).fadeIn(200);
+                  });
+                  
+                  $('#contact-telpon').fadeOut(200, function() {
+                      var telponLines = data.telpon.split('\n');
+                      var telponHtml = '';
+                      $.each(telponLines, function(index, line) {
+                          if(line.trim()) {
+                              telponHtml += '<p>' + line.trim() + '</p>';
+                          }
+                      });
+                      $(this).html(telponHtml).fadeIn(200);
+                  });
+                  
+                  $('#contact-email').fadeOut(200, function() {
+                      var emailLines = data.email.split('\n');
+                      var emailHtml = '';
+                      $.each(emailLines, function(index, line) {
+                          if(line.trim()) {
+                              emailHtml += '<p><a href="mailto:' + line.trim() + '">' + line.trim() + '</a></p>';
+                          }
+                      });
+                      $(this).html(emailHtml).fadeIn(200);
+                  });
+                  
+                  $('#contact-jam').fadeOut(200, function() {
+                      var jamLines = data.jam_pelayanan.split('\n');
+                      var jamHtml = '';
+                      $.each(jamLines, function(index, line) {
+                          if(line.trim()) {
+                              jamHtml += '<p>' + line.trim() + '</p>';
+                          }
+                      });
+                      $(this).html(jamHtml).fadeIn(200);
+                  });
+                  
+                  // Update Google Maps iframe with fade effect
+                  $('#map-container').fadeOut(300, function() {
+                    let mapSrc = data.location == "/" ? "<p class='text-center'>Lokasi map tidak ditetapkan</p>" : data.location;
+                      $(this).html(mapSrc).fadeIn(300);
+                      $(this).css('opacity', '1');
+                  });
+              },
+              error: function(xhr, status, error) {
+                  console.error('Error loading contact data:', error);
+                  
+                  // Show error message
+                  $('#contact-alamat').html('<p class="text-danger">Error loading data</p>');
+                  $('#contact-telpon').html('<p class="text-danger">Error loading data</p>');
+                  $('#contact-email').html('<p class="text-danger">Error loading data</p>');
+                  $('#contact-jam').html('<p class="text-danger">Error loading data</p>');
+                  
+                  $('#map-container').css('opacity', '1');
+                  
+                  // Show user-friendly error message
+                  if(xhr.status === 404) {
+                      alert('Data lokasi tidak ditemukan');
+                  } else {
+                      alert('Terjadi kesalahan saat memuat data. Silakan coba lagi.');
+                  }
+              }
+          });
+      }  
     });
-      
-    function loadLocationContact(locationId) {
-        // Show loading state with animation
-        $('#contact-alamat').html('<p class="text-muted"><i class="bi bi-hourglass-split"></i> Loading...</p>');
-        $('#contact-telpon').html('<p class="text-muted"><i class="bi bi-hourglass-split"></i> Loading...</p>');
-        $('#contact-email').html('<p class="text-muted"><i class="bi bi-hourglass-split"></i> Loading...</p>');
-        $('#contact-jam').html('<p class="text-muted"><i class="bi bi-hourglass-split"></i> Loading...</p>');
-        
-        // Add loading overlay to map
-        $('#map-container').css('opacity', '0.5');
-        
-        // AJAX request to fetch location data
-        $.ajax({
-            url: '/api/location-contact/' + locationId,
-            type: 'GET',
-            dataType: 'json',
-            success: function(data) {
-                // Update contact information with fade effect
-                $('#contact-alamat').fadeOut(200, function() {
-                    // Split address by line breaks or commas
-                    var alamatLines = data.alamat.split('\n');
-                    var alamatHtml = '';
-                    $.each(alamatLines, function(index, line) {
-                        if(line.trim()) {
-                            alamatHtml += '<p>' + line.trim() + '</p>';
-                        }
-                    });
-                    $(this).html(alamatHtml).fadeIn(200);
-                });
-                
-                $('#contact-telpon').fadeOut(200, function() {
-                    var telponLines = data.telpon.split('\n');
-                    var telponHtml = '';
-                    $.each(telponLines, function(index, line) {
-                        if(line.trim()) {
-                            telponHtml += '<p>' + line.trim() + '</p>';
-                        }
-                    });
-                    $(this).html(telponHtml).fadeIn(200);
-                });
-                
-                $('#contact-email').fadeOut(200, function() {
-                    var emailLines = data.email.split('\n');
-                    var emailHtml = '';
-                    $.each(emailLines, function(index, line) {
-                        if(line.trim()) {
-                            emailHtml += '<p><a href="mailto:' + line.trim() + '">' + line.trim() + '</a></p>';
-                        }
-                    });
-                    $(this).html(emailHtml).fadeIn(200);
-                });
-                
-                $('#contact-jam').fadeOut(200, function() {
-                    var jamLines = data.jam_pelayanan.split('\n');
-                    var jamHtml = '';
-                    $.each(jamLines, function(index, line) {
-                        if(line.trim()) {
-                            jamHtml += '<p>' + line.trim() + '</p>';
-                        }
-                    });
-                    $(this).html(jamHtml).fadeIn(200);
-                });
-                
-                // Update Google Maps iframe with fade effect
-                $('#map-container').fadeOut(300, function() {
-                    $(this).html(data.location).fadeIn(300);
-                    $(this).css('opacity', '1');
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error('Error loading contact data:', error);
-                
-                // Show error message
-                $('#contact-alamat').html('<p class="text-danger">Error loading data</p>');
-                $('#contact-telpon').html('<p class="text-danger">Error loading data</p>');
-                $('#contact-email').html('<p class="text-danger">Error loading data</p>');
-                $('#contact-jam').html('<p class="text-danger">Error loading data</p>');
-                
-                $('#map-container').css('opacity', '1');
-                
-                // Show user-friendly error message
-                if(xhr.status === 404) {
-                    alert('Data lokasi tidak ditemukan');
-                } else {
-                    alert('Terjadi kesalahan saat memuat data. Silakan coba lagi.');
-                }
-            }
-        });
-    }
   </script>
-
 </body>
 
 </html>

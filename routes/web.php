@@ -10,7 +10,7 @@ Route::get('/artikel', [FrontController::class, 'blog'])->name('artikel.detail')
 Route::get('/artikel-search', [FrontController::class, 'blogSearch'])->name('artikel.cari');
 Route::get('/galeri/{page}', [FrontController::class, 'gallery'])->name('galeri.detail');
 Route::get('/layanan-kami', [FrontController::class, 'layanan'])->name('layanan-kami');
-
+Route::get('/location-contact/{id}', [FrontController::class, 'getLocationContact'])->name('location.contact');
 
 
 Route::any('login', [AuthController::class, 'login'])->name('login');
@@ -65,4 +65,10 @@ Route::middleware('auth')->group(function () {
     Route::any('cms-faq', [CMSController::class, 'faqData'])->name('admin.faq');
     Route::get('cms-faq-detail/{id}', [CMSController::class, 'faqById']);
     Route::post('cms-faq-delete', [CMSController::class, 'deleteFaq'])->name('admin.faq-delete');
+
+    // Location management routes
+    Route::get('/locations', [CMSController::class, 'contactData'])->name('location.index');
+    Route::post('/locations/update', [CMSController::class, 'contactUpdate'])->name('location.update');
+    Route::get('/locations/{id}', [CMSController::class, 'getLocation'])->name('location.get');
+
 });
